@@ -1,0 +1,6 @@
+source 'https://github.com/CocoaPods/Specs.git'
+
+# ReactiveFit, the example, is a RACified version of
+# Apple's sample Fit app: https://developer.apple.com/library/ios/samplecode/Fit/Introduction/Intro.html
+
+pod "ReactiveHealthKit", :path => "../"

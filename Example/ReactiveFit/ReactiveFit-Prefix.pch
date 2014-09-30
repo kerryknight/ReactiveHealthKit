@@ -1,0 +1,17 @@
+//
+//  ReactiveFit-Prefix.pch
+//  ReactiveFit
+//
+//  Created by Kerry Knight on 9/27/14.
+//
+
+
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+
+#ifdef __OBJC__
+    #import "ReactiveCocoa.h"
+    #import "RACExtScope.h"
+    #import "ReactiveHealthKit.h"
+#endif
+
