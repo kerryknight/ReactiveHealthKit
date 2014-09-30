@@ -1,7 +1,7 @@
 ReactiveHealthKit
 =================
 
-ReactiveCocoa extensions for HealthKit.  Pull requests welcome.
+ReactiveCocoa extensions for HealthKit to enable functional reactive programming patterns.  Pull requests welcome.
 
 Cocoapod integration and unit tests coming soon...
 
