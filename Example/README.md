@@ -1,3 +1,6 @@
+### Developer's Note: Below is Apple's original README pertaining to its [Fit](https://developer.apple.com/library/ios/samplecode/Fit/Introduction/Intro.html) sample project. ReactiveFit, the example included with ReactiveHealthKit, is a direct port of Fit from using block-based methods to reactive signals. All other workflows are the same so this README still holds.
+
+
 # Fit: HealthKit in Action
 
 ===========================================================================
