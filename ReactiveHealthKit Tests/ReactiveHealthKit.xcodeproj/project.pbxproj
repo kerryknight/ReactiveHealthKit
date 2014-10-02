@@ -11,9 +11,10 @@
 		6003F5B1195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
 		6003F5B2195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
 		6003F5BA195388D20070C39A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5B8195388D20070C39A /* InfoPlist.strings */; };
-		6003F5BC195388D20070C39A /* HKHealthStore+RAC_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5BB195388D20070C39A /* HKHealthStore+RAC_Tests.m */; };
 		E5296111022AC1948A1994D9 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E7EB98F840FBDAE2BE792B34 /* libPods.a */; };
-		F16C4BF619DD2A8B004793FF /* ReactiveHealthKitTestHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = F16C4BF519DD2A8B004793FF /* ReactiveHealthKitTestHelpers.m */; };
+		F1287E3119DDAB8E00ABFC16 /* HKHealthStore+RACQuerying_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = F1287E3019DDAB8E00ABFC16 /* HKHealthStore+RACQuerying_Tests.m */; };
+		F182B90919DDEAB60041A7A6 /* HKHealthStore+RAC_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5BB195388D20070C39A /* HKHealthStore+RAC_Tests.m */; };
+		F182B90A19DDEABB0041A7A6 /* HKHealthStore+RACErrors_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = F1A6188819DDA70500166CD5 /* HKHealthStore+RACErrors_Tests.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,8 +34,8 @@
 		606FC2411953D9B200FFA9A0 /* Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Tests-Prefix.pch"; sourceTree = "<group>"; };
 		E4DABB7F1B9026C44755F640 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		E7EB98F840FBDAE2BE792B34 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		F16C4BF419DD2A8B004793FF /* ReactiveHealthKitTestHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactiveHealthKitTestHelpers.h; sourceTree = "<group>"; };
-		F16C4BF519DD2A8B004793FF /* ReactiveHealthKitTestHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReactiveHealthKitTestHelpers.m; sourceTree = "<group>"; };
+		F1287E3019DDAB8E00ABFC16 /* HKHealthStore+RACQuerying_Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "HKHealthStore+RACQuerying_Tests.m"; sourceTree = "<group>"; };
+		F1A6188819DDA70500166CD5 /* HKHealthStore+RACErrors_Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "HKHealthStore+RACErrors_Tests.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,8 +89,8 @@
 			isa = PBXGroup;
 			children = (
 				6003F5BB195388D20070C39A /* HKHealthStore+RAC_Tests.m */,
-				F16C4BF419DD2A8B004793FF /* ReactiveHealthKitTestHelpers.h */,
-				F16C4BF519DD2A8B004793FF /* ReactiveHealthKitTestHelpers.m */,
+				F1287E3019DDAB8E00ABFC16 /* HKHealthStore+RACQuerying_Tests.m */,
+				F1A6188819DDA70500166CD5 /* HKHealthStore+RACErrors_Tests.m */,
 				6003F5B6195388D20070C39A /* Supporting Files */,
 			);
 			path = Tests;
@@ -228,8 +229,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6003F5BC195388D20070C39A /* HKHealthStore+RAC_Tests.m in Sources */,
-				F16C4BF619DD2A8B004793FF /* ReactiveHealthKitTestHelpers.m in Sources */,
+				F182B90A19DDEABB0041A7A6 /* HKHealthStore+RACErrors_Tests.m in Sources */,
+				F1287E3119DDAB8E00ABFC16 /* HKHealthStore+RACQuerying_Tests.m in Sources */,
+				F182B90919DDEAB60041A7A6 /* HKHealthStore+RAC_Tests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

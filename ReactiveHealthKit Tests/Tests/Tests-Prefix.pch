@@ -11,6 +11,7 @@
     #import <OCMock/OCMock.h>
     #import "ReactiveCocoa.h"
     #import "ReactiveHealthKit.h"
+    #import "HKHealthStore+RACErrors.h"
 
 #endif
 
