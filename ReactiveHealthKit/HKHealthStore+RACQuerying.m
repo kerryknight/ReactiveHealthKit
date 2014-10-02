@@ -24,11 +24,11 @@
                                            predicate:predicate
                                                limit:limit
                                      sortDescriptors:sortDescriptors
-                                          completion:^(NSArray *results, NSError *error) {
+                                          completion:^(HKSampleQuery *query, NSArray *results, NSError *error) {
                                               // always check the returned object as HealthKit won't create an
                                               // error if a user has not granted us access to the data point
                                               if (results) {
-                                                  [subscriber sendNext:results];
+                                                  [subscriber sendNext:@{@"query":query, @"results":results}];
                                                   [subscriber sendCompleted];
                                               }
                                               else {
@@ -49,11 +49,11 @@
         [self rac_executeStatisticsQueryWithQuantityType:quantityType
                                  quantitySamplePredicate:quantitySamplePredicate
                                                  options:options
-                                              completion:^(HKStatistics *result, NSError *error) {
+                                              completion:^(HKStatisticsQuery *query, HKStatistics *result, NSError *error) {
                                                   // always check the returned object as HealthKit won't create an
                                                   // error if a user has not granted us access to the data point
                                                   if (result) {
-                                                      [subscriber sendNext:result];
+                                                      [subscriber sendNext:@{@"query":query, @"result":result}];
                                                       [subscriber sendCompleted];
                                                   }
                                                   else {
@@ -70,7 +70,7 @@
                                      predicate:(NSPredicate *)predicate
                                          limit:(NSUInteger)limit
                                sortDescriptors:(NSArray *)sortDescriptors
-                                    completion:(void (^)(NSArray *results, NSError *error))completion
+                                    completion:(void (^)(HKSampleQuery *query, NSArray *results, NSError *error))completion
 {
     
     HKSampleQuery *query = [[HKSampleQuery alloc] initWithSampleType:sampleType
@@ -80,9 +80,9 @@
                                                       resultsHandler:^(HKSampleQuery *query, NSArray *results, NSError *error) {
                                                           
                                                           if (error) {
-                                                              completion(nil, error);
+                                                              completion(query, nil, error);
                                                           } else {
-                                                              completion(results, nil);
+                                                              completion(query, results, nil);
                                                           }
                                                       }];
     
@@ -92,7 +92,7 @@
 - (void)rac_executeStatisticsQueryWithQuantityType:(HKQuantityType *)quantityType
                            quantitySamplePredicate:(NSPredicate *)quantitySamplePredicate
                                            options:(HKStatisticsOptions)options
-                                        completion:(void (^)(HKStatistics *result, NSError *error))completion
+                                        completion:(void (^)(HKStatisticsQuery *query, HKStatistics *result, NSError *error))completion
 {
     HKStatisticsQuery *query = [[HKStatisticsQuery alloc] initWithQuantityType:quantityType
                                                        quantitySamplePredicate:quantitySamplePredicate
@@ -100,9 +100,9 @@
                                                              completionHandler:^(HKStatisticsQuery *query, HKStatistics *result, NSError *error) {
                                                                  
                                                                  if (error) {
-                                                                     completion(nil, error);
+                                                                     completion(query, nil, error);
                                                                  } else {
-                                                                     completion(result, nil);
+                                                                     completion(query, result, nil);
                                                                  }
                                                              }];
     
