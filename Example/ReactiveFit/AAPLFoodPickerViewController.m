@@ -31,7 +31,6 @@ NSString *const AAPLFoodPickerViewControllerUnwindSegueIdentifier = @"AAPLFoodPi
     self.foodItems = @[
         [AAPLFoodItem foodItemWithName:@"Wheat Bagel" joules:240000.0],
         [AAPLFoodItem foodItemWithName:@"Bran with Raisins" joules:190000.0],
-        [AAPLFoodItem foodItemWithName:@"Regular Instant Coffee" joules:1000.0],
         [AAPLFoodItem foodItemWithName:@"Banana" joules:439320.0],
         [AAPLFoodItem foodItemWithName:@"Cranberry Bagel" joules:416000.0],
         [AAPLFoodItem foodItemWithName:@"Oatmeal" joules:150000.0],

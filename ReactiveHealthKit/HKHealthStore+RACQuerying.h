@@ -15,7 +15,7 @@
 ///
 /// @see private -rac_executeStatisticsQueryWithQuantityType:quantitySamplePredicate:options:completion:
 ///
-/// @return A signal that sends the NSArray of queried results
+/// @return A signal that sends an NSDictionary of the HKSampleQuery object and an NSArray of results
 - (RACSignal *)rac_executeSampleQueryWithSampleOfType:(HKSampleType *)sampleType
                                             predicate:(NSPredicate *)predicate
                                                 limit:(NSUInteger)limit
@@ -26,7 +26,7 @@
 ///
 /// @see private -rac_executeStatisticsQueryWithQuantityType:quantitySamplePredicate:options:completion:
 ///
-/// @return A signal that sends the NSArray of queried results
+/// @return A signal that sends an NSDictionary of the HKStatisticsQuery object and HKStatistics result
 - (RACSignal *)rac_executeStatisticsQueryWithQuantityType:(HKQuantityType *)quantityType
                                   quantitySamplePredicate:(NSPredicate *)quantitySamplePredicate
                                                   options:(HKStatisticsOptions)options;
