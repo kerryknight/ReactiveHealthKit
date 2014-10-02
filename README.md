@@ -12,6 +12,17 @@ it, simply add the following line to your Podfile:
 
     pod "ReactiveHealthKit"
 
+## Testing
+
+ReactiveHealthKit is fully unit tested.  To run tests, clone the project or download the [project zip file](https://github.com/kerryknight/ReactiveHealthKit/archive/develop.zip) and extract.  From the root project folder:
+
+    cd ReactiveHealthKitTests
+    pod install
+
+Once all [CocoaPods](http://cocoapods.org/) have been successfully installed, you can open the **ReactiveHealthKit.xcworkspace** file and `Cmd + U` to run the tests or, if you have [xctool](https://github.com/facebook/xctool) installed, run:
+
+    xctool test -workspace ReactiveHealthKit.xcworkspace -scheme ReactiveHealthKit -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO
+
 ## Example Project 
 
 The included example project is a direct port of Apple's [Fit sample project](https://developer.apple.com/library/ios/samplecode/Fit/Introduction/Intro.html). I've tried to modify the app and its workflow as little as possible from Apple's original design, beyond that which enables using ReactiveHealthKit in a 1-to-1 swap of Apple's block-based code.  However, this does not mean there aren't underlying issues with Apple's code or issues I've inadvertently introduced myself.  Pull requests are welcome if you come across something in need of fixing. 
