@@ -1,6 +1,10 @@
 ReactiveHealthKit
 =================
 
+[![CI Status](http://img.shields.io/travis/Kerry Knight/ReactiveHealthKit.svg?style=flat)](https://travis-ci.org/Kerry Knight/ReactiveHealthKit)
+
+
+
 ReactiveHealthKit adds simple [ReactiveCocoa](http://reactivecocoa.io/) extensions to Apple's [HealthKit](https://developer.apple.com/library/ios/documentation/HealthKit/Reference/HealthKit_Framework/index.html) framework to lift HealthKit's block-based APIs into the functional reactive programming world.  Check out the included [ReactiveFit](https://github.com/kerryknight/ReactiveHealthKit/tree/master/Example) project for usage examples. Pull requests welcome.
 
 Unit tests coming soon...
