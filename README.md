@@ -1,7 +1,7 @@
 ReactiveHealthKit
 =================
 
-[![CI Status](http://img.shields.io/travis/Kerry Knight/ReactiveHealthKit.svg?style=flat)](https://travis-ci.org/Kerry Knight/ReactiveHealthKit)
+[![CI Status](http://img.shields.io/travis/kerryknight/ReactiveHealthKit.svg?style=flat)](https://travis-ci.org/kerryknight/ReactiveHealthKit)
 
 
 
