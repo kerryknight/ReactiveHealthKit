@@ -1,9 +1,6 @@
 ReactiveHealthKit
 =================
 
-[![CI Status](http://img.shields.io/travis/kerryknight/ReactiveHealthKit.svg?style=flat)](https://travis-ci.org/kerryknight/ReactiveHealthKit)
-
-
 
 ReactiveHealthKit adds simple [ReactiveCocoa](http://reactivecocoa.io/) extensions to Apple's [HealthKit](https://developer.apple.com/library/ios/documentation/HealthKit/Reference/HealthKit_Framework/index.html) framework to lift HealthKit's block-based APIs into the functional reactive programming world.  Check out the included [ReactiveFit](https://github.com/kerryknight/ReactiveHealthKit/tree/master/Example) project for usage examples. Pull requests welcome.
 
@@ -14,6 +11,17 @@ ReactiveHealthKit is available through [CocoaPods](http://cocoapods.org). To ins
 it, simply add the following line to your Podfile:
 
     pod "ReactiveHealthKit"
+
+## Testing
+
+ReactiveHealthKit is fully unit tested.  To run tests, clone the project or download the [project zip file](https://github.com/kerryknight/ReactiveHealthKit/archive/develop.zip) and extract.  From the root project folder:
+
+    cd ReactiveHealthKitTests
+    pod install
+
+Once all [CocoaPods](http://cocoapods.org/) have been successfully installed, you can open the **ReactiveHealthKit.xcworkspace** file and `Cmd + U` to run the tests or, if you have [xctool](https://github.com/facebook/xctool) installed, run:
+
+    xctool test -workspace ReactiveHealthKit.xcworkspace -scheme ReactiveHealthKit -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO
 
 ## Example Project 
 
