@@ -21,7 +21,10 @@
         @strongify(self)
         
         [[self rac_executeSampleQueryWithSampleOfType:quantityType predicate:predicate limit:1 sortDescriptors:@[timeSortDescriptor]]
-         subscribeNext:^(NSArray *results) {
+         subscribeNext:^(NSDictionary *data) {
+             
+             NSArray *results = (NSArray *)data[@"results"];
+             
              if (results) {
                  // If quantity isn't in the database, return nil in the completion block.
                  HKQuantitySample *quantitySample = results.firstObject;

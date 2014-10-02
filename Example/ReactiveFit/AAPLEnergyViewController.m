@@ -91,7 +91,9 @@
         @strongify(self)
         
         [[self.healthStore rac_executeStatisticsQueryWithQuantityType:quantityType quantitySamplePredicate:predicate options:HKStatisticsOptionCumulativeSum]
-         subscribeNext:^(HKStatistics *result) {
+         subscribeNext:^(NSDictionary *data) {
+             
+             HKStatistics *result = (HKStatistics *)data[@"result"];
              HKQuantity *sum = [result sumQuantity];
              
              if (sum) {
