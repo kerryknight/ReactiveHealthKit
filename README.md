@@ -4,6 +4,9 @@ ReactiveHealthKit
 
 ReactiveHealthKit adds simple [ReactiveCocoa](http://reactivecocoa.io/) extensions to Apple's [HealthKit](https://developer.apple.com/library/ios/documentation/HealthKit/Reference/HealthKit_Framework/index.html) framework to lift HealthKit's block-based APIs into the functional reactive programming world.  Check out the included [ReactiveFit](https://github.com/kerryknight/ReactiveHealthKit/tree/master/Example) project for usage examples. Pull requests welcome.
 
+## Developer Notes
+
+You should probably read all of Apple's [HealthKit](https://developer.apple.com/library/ios/documentation/HealthKit/Reference/HealthKit_Framework/index.html) reference prior to using ReactiveHealthKit.  ReactiveHealthKit strives to mimic the native behavior of HealthKit so it's imperative you understand the caveats that go along with a user allowing or denying access to certain HealthKit data points. For instance, HealthKit will not return an error if a user has denied access to a certain data point you're querying for (e.g. weight) and thus, it'll be up to you to ensure you check that the response's data point exists prior to use.
 
 ## Installation
 
