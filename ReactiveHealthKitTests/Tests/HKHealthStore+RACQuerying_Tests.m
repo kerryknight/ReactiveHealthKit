@@ -158,14 +158,17 @@ describe(@"HKHealthStore+RACQuerying", ^{
                 mockQuery = nil;
             });
             
-            it(@"should return a data", ^{
-                [[mock rac_executeSampleQueryWithSampleOfType:OCMOCK_ANY predicate:OCMOCK_ANY limit:0 sortDescriptors:OCMOCK_ANY] subscribeNext:^(NSDictionary *data) {
-                    NSArray *results = data[@"results"];
+            it(@"should return query and results data", ^{
+                [[mock rac_executeSampleQueryWithSampleOfType:OCMOCK_ANY predicate:OCMOCK_ANY limit:0 sortDescriptors:OCMOCK_ANY] subscribeNext:^(RACTuple *data) {
+                    HKStatisticsQuery *query = data.first;
+                    NSArray *results = data.second;
+                    
+                    [[query shouldNot] beNil];
                     [[results shouldNot] beNil];
                 }];
             });
         });
-        
+
         context(@"query failure", ^{
             __block id mockQuery;
             HKSampleQuery *queryToMock = [[HKSampleQuery alloc] initWithSampleType:nil predicate:nil limit:1 sortDescriptors:nil resultsHandler:nil];
@@ -188,7 +191,7 @@ describe(@"HKHealthStore+RACQuerying", ^{
             });
         });
     }); // rac_executeSampleQueryWithSampleOfType:predicate:limit:sortDescriptors:
-    
+
     describe(@"rac_executeStatisticsQueryWithQuantityType:quantitySamplePredicate:options:", ^{
         it(@"should create a new, immutable signal", ^{
             RACSignal *signal = [mock rac_executeStatisticsQueryWithQuantityType:OCMOCK_ANY quantitySamplePredicate:OCMOCK_ANY options:0];
@@ -223,10 +226,13 @@ describe(@"HKHealthStore+RACQuerying", ^{
                 mockQuery = nil;
             });
             
-            it(@"should return data", ^{
-                [[mock rac_executeStatisticsQueryWithQuantityType:OCMOCK_ANY quantitySamplePredicate:OCMOCK_ANY options:0] subscribeNext:^(NSDictionary *data) {
-                    NSArray *results = data[@"result"];
-                    [[results shouldNot] beNil];
+            it(@"should return query and result data", ^{
+                [[mock rac_executeStatisticsQueryWithQuantityType:OCMOCK_ANY quantitySamplePredicate:OCMOCK_ANY options:0] subscribeNext:^(RACTuple *data) {
+                    HKStatisticsQuery *query = data.first;
+                    HKStatistics *result = data.second;
+                    
+                    [[query shouldNot] beNil];
+                    [[result shouldNot] beNil];
                 }];
             });
         });

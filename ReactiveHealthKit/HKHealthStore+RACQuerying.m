@@ -5,7 +5,6 @@
 //
 
 #import "HKHealthStore+RACQuerying.h"
-#import "HKHealthStore+RACErrors.h"
 #import "ReactiveCocoa.h"
 #import "RACExtScope.h"
 
@@ -25,17 +24,19 @@
                                                limit:limit
                                      sortDescriptors:sortDescriptors
                                           completion:^(HKSampleQuery *query, NSArray *results, NSError *error) {
-                                              // always check the returned object as HealthKit won't create an
-                                              // error if a user has not granted us access to the data point
-                                              if (results) {
-                                                  [subscriber sendNext:@{@"query":query, @"results":results}];
+                                              
+                                              if (!error) {
+                                                  // REMEMBER: just because we don't have an error here, doesn't
+                                                  // mean we have data; always check the returned object prior
+                                                  // to use as HealthKit won't create an error if a user has not
+                                                  // granted us access to the data point we want to retrieve
+                                                  [subscriber sendNext:RACTuplePack(query, results)];
                                                   [subscriber sendCompleted];
                                               }
                                               else {
-                                                  [subscriber sendError:[self rac_healthKitErrorForError:error]];
+                                                  [subscriber sendError:error];
                                               }
                                           }];
-        
         return (RACDisposable *)nil;
     }];
 }
@@ -50,17 +51,19 @@
                                  quantitySamplePredicate:quantitySamplePredicate
                                                  options:options
                                               completion:^(HKStatisticsQuery *query, HKStatistics *result, NSError *error) {
-                                                  // always check the returned object as HealthKit won't create an
-                                                  // error if a user has not granted us access to the data point
-                                                  if (result) {
-                                                      [subscriber sendNext:@{@"query":query, @"result":result}];
+                                                  
+                                                  if (!error) {
+                                                      // REMEMBER: just because we don't have an error here, doesn't
+                                                      // mean we have data; always check the returned object prior
+                                                      // to use as HealthKit won't create an error if a user has not
+                                                      // granted us access to the data point we want to retrieve
+                                                      [subscriber sendNext:RACTuplePack(query, result)];
                                                       [subscriber sendCompleted];
                                                   }
                                                   else {
-                                                      [subscriber sendError:[self rac_healthKitErrorForError:error]];
+                                                      [subscriber sendError:error];
                                                   }
                                               }];
-        
         return (RACDisposable *)nil;
     }];
 }
@@ -79,11 +82,7 @@
                                                      sortDescriptors:sortDescriptors
                                                       resultsHandler:^(HKSampleQuery *query, NSArray *results, NSError *error) {
                                                           
-                                                          if (error) {
-                                                              completion(query, nil, error);
-                                                          } else {
-                                                              completion(query, results, nil);
-                                                          }
+                                                          completion(query, results, error);
                                                       }];
     
     [self executeQuery:query];
@@ -99,11 +98,7 @@
                                                                        options:options
                                                              completionHandler:^(HKStatisticsQuery *query, HKStatistics *result, NSError *error) {
                                                                  
-                                                                 if (error) {
-                                                                     completion(query, nil, error);
-                                                                 } else {
-                                                                     completion(query, result, nil);
-                                                                 }
+                                                                 completion(query, result, error);
                                                              }];
     
     [self executeQuery:query];

@@ -113,7 +113,7 @@ typedef NS_ENUM(NSInteger, AAPLProfileViewControllerTableViewIndex) {
      } error:^(NSError *error) {
          @strongify(self)
          self.ageValueLabel.text = NSLocalizedString(@"Not available", nil);
-         NSLog(@"Either an error occured fetching the user's age information or none has been stored yet. In your app, try to handle this gracefully.");
+         NSLog(@"An error occured fetching the user's age information. In your app, try to handle this gracefully.");
      }];
 }
 
