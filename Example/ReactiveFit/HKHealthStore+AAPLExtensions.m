@@ -21,10 +21,12 @@
         @strongify(self)
         
         [[self rac_executeSampleQueryWithSampleOfType:quantityType predicate:predicate limit:1 sortDescriptors:@[timeSortDescriptor]]
-         subscribeNext:^(NSDictionary *data) {
+         subscribeNext:^(RACTuple *data) {
              
-             NSArray *results = (NSArray *)data[@"results"];
+             NSArray *results = (NSArray *)data.second;
              
+             // always check the returned object as HealthKit won't create an
+             // error if a user has not granted us access to that data point
              if (results) {
                  // If quantity isn't in the database, return nil in the completion block.
                  HKQuantitySample *quantitySample = results.firstObject;

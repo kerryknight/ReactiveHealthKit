@@ -59,9 +59,9 @@ NSString *const AAPLJournalViewControllerTableViewCellReuseIdentifier = @"cell";
     [[[self.healthStore rac_executeSampleQueryWithSampleOfType:foodType predicate:predicate limit:HKObjectQueryNoLimit sortDescriptors:nil]
       // ensure we deliver on main thread as HealthKit queries always use a background thread
       deliverOn:[RACScheduler mainThreadScheduler]]
-     subscribeNext:^(NSDictionary *data) {
-         
-         NSArray *results = (NSArray *)data[@"results"];
+     subscribeNext:^(RACTuple *data) {
+         // tuple unpacked == (HKStatisticsQuery *query, NSArray *results)
+         NSArray *results = data.second;
          
          @strongify(self)
          if (results) {

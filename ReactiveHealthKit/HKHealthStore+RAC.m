@@ -5,7 +5,6 @@
 //
 
 #import "HKHealthStore+RAC.h"
-#import "HKHealthStore+RACErrors.h"
 #import "ReactiveCocoa.h"
 #import "RACExtScope.h"
 
@@ -19,7 +18,7 @@
                 @strongify(self)
         
                 [self requestAuthorizationToShareTypes:typesToShare readTypes:typesToRead completion:^(BOOL success, NSError *error) {
-                    if (error == nil) {
+                    if (!error) {
                         [subscriber sendNext:@(success)];
                         [subscriber sendCompleted];
                     }
@@ -59,7 +58,7 @@
         @strongify(self)
         
         [self saveObjects:objects withCompletion:^(BOOL success, NSError *error) {
-            if (error == nil) {
+            if (!error) {
                 [subscriber sendNext:@(success)];
                 [subscriber sendCompleted];
             }
@@ -79,7 +78,7 @@
         @strongify(self)
         
         [self deleteObject:object withCompletion:^(BOOL success, NSError *error) {
-            if (error == nil) {
+            if (!error) {
                 [subscriber sendNext:@(success)];
                 [subscriber sendCompleted];
             }
@@ -101,13 +100,16 @@
         NSError *error = nil;
         NSDate *dateOfBirth = [self dateOfBirthWithError:&error];
         
-        // always check the returned object as HealthKit won't create an
-        // error if a user has not granted us access to the data point
-        if (dateOfBirth) {
+        if (!error) {
+            // REMEMBER: just because we don't have an error here, doesn't
+            // mean we have data; always check the returned object prior
+            // to use as HealthKit won't create an error if a user has not
+            // granted us access to the data point we want to retrieve
             [subscriber sendNext:dateOfBirth];
             [subscriber sendCompleted];
-        } else {
-            [subscriber sendError:[self rac_healthKitErrorForError:error]];
+        }
+        else {
+            [subscriber sendError:error];
         }
         
         return (RACDisposable *)nil;
@@ -123,13 +125,16 @@
         NSError *error = nil;
         HKBiologicalSexObject *biologicalSexObject = [self biologicalSexWithError:&error];
         
-        // always check the returned object as HealthKit won't create an
-        // error if a user has not granted us access to the data point
-        if (biologicalSexObject) {
+        if (!error) {
+            // REMEMBER: just because we don't have an error here, doesn't
+            // mean we have data; always check the returned object prior
+            // to use as HealthKit won't create an error if a user has not
+            // granted us access to the data point we want to retrieve
             [subscriber sendNext:biologicalSexObject];
             [subscriber sendCompleted];
-        } else {
-            [subscriber sendError:[self rac_healthKitErrorForError:error]];
+        }
+        else {
+            [subscriber sendError:error];
         }
         
         return (RACDisposable *)nil;
@@ -145,13 +150,16 @@
         NSError *error = nil;
         HKBloodTypeObject *bloodTypeObject = [self bloodTypeWithError:&error];
         
-        // always check the returned object as HealthKit won't create an
-        // error if a user has not granted us access to the data point
-        if (bloodTypeObject) {
+        if (!error) {
+            // REMEMBER: just because we don't have an error here, doesn't
+            // mean we have data; always check the returned object prior
+            // to use as HealthKit won't create an error if a user has not
+            // granted us access to the data point we want to retrieve
             [subscriber sendNext:bloodTypeObject];
             [subscriber sendCompleted];
-        } else {
-            [subscriber sendError:[self rac_healthKitErrorForError:error]];
+        }
+        else {
+            [subscriber sendError:error];
         }
         
         return (RACDisposable *)nil;
@@ -166,7 +174,7 @@
         @strongify(self)
         
         [self addSamples:samples toWorkout:workout completion:^(BOOL success, NSError *error) {
-            if (error == nil) {
+            if (!error) {
                 [subscriber sendNext:@(success)];
                 [subscriber sendCompleted];
             }
@@ -186,7 +194,7 @@
     return [RACSignal createSignal:^(id<RACSubscriber> subscriber) {
         @strongify(self)
         [self enableBackgroundDeliveryForType:type frequency:frequency withCompletion:^(BOOL success, NSError *error) {
-            if (error == nil) {
+            if (!error) {
                 [subscriber sendNext:@(success)];
                 [subscriber sendCompleted];
             }
@@ -203,8 +211,9 @@
     @weakify(self)
     return [RACSignal createSignal:^(id<RACSubscriber> subscriber) {
         @strongify(self)
+        
         [self disableBackgroundDeliveryForType:type withCompletion:^(BOOL success, NSError *error) {
-            if (error == nil) {
+            if (!error) {
                 [subscriber sendNext:@(success)];
                 [subscriber sendCompleted];
             }
@@ -221,8 +230,9 @@
     @weakify(self)
     return [RACSignal createSignal:^(id<RACSubscriber> subscriber) {
         @strongify(self)
+        
         [self disableAllBackgroundDeliveryWithCompletion:^(BOOL success, NSError *error) {
-            if (error == nil) {
+            if (!error) {
                 [subscriber sendNext:@(success)];
                 [subscriber sendCompleted];
             }

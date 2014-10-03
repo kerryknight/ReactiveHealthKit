@@ -56,24 +56,23 @@
     RACSignal *basalBurnSignal = [self fetchTotalBasalBurn];
     
     @weakify(self)
-    [[[RACSignal zip:@[energyConsumedSignal, energyBurnedSignal, basalBurnSignal]
-              reduce:^id(NSNumber *totalJoulesConsumed, NSNumber *activeEnergyBurned, HKQuantity *basalEnergyBurn) {
-                  NSMutableDictionary *data = [@{@"energyConsumed"      : totalJoulesConsumed ?: @0,
-                                                 @"activeEnergyBurned"  : activeEnergyBurned ?: @0} mutableCopy];
-                  
-                  if (basalEnergyBurn)
-                      data[@"basalEnergyBurn"] = basalEnergyBurn;
-                  
-                  return data;
-              }]
+    [[[RACSignal
+       zip:@[energyConsumedSignal, energyBurnedSignal, basalBurnSignal]
+       reduce:^id(NSNumber *totalJoulesConsumed, NSNumber *activeEnergyBurned, HKQuantity *basalEnergyBurn) {
+           return RACTuplePack(totalJoulesConsumed, activeEnergyBurned, basalEnergyBurn);
+       }]
       // ensure we deliver on main thread as HealthKit queries always use a background thread
       deliverOn:[RACScheduler mainThreadScheduler]]
-     subscribeNext:^(NSMutableDictionary *data) {
+     subscribeNext:^(RACTuple *data) {
          @strongify(self)
          
-         self.energyConsumed = [data[@"energyConsumed"] doubleValue];
-         self.activeEnergyBurned = [data[@"activeEnergyBurned"] doubleValue];
-         self.restingEnergyBurned = data[@"basalEnergyBurn"] ? [data[@"basalEnergyBurn"] doubleValueForUnit:[HKUnit jouleUnit]] : 0;
+         NSNumber *totalJoulesConsumed = data.first;
+         NSNumber *activeEnergyBurned = data.second;
+         HKQuantity *basalEnergyBurn = data.third;
+         
+         self.energyConsumed = totalJoulesConsumed ? [totalJoulesConsumed doubleValue] : 0;
+         self.activeEnergyBurned = activeEnergyBurned ? [activeEnergyBurned doubleValue] : 0;
+         self.restingEnergyBurned = basalEnergyBurn ? [basalEnergyBurn doubleValueForUnit:[HKUnit jouleUnit]] : 0;
          self.netEnergy = self.energyConsumed - self.activeEnergyBurned - self.restingEnergyBurned;
          
          [self.refreshControl endRefreshing];
@@ -91,9 +90,9 @@
         @strongify(self)
         
         [[self.healthStore rac_executeStatisticsQueryWithQuantityType:quantityType quantitySamplePredicate:predicate options:HKStatisticsOptionCumulativeSum]
-         subscribeNext:^(NSDictionary *data) {
+         subscribeNext:^(RACTuple *data) {
              
-             HKStatistics *result = (HKStatistics *)data[@"result"];
+             HKStatistics *result = (HKStatistics *)data.second;
              HKQuantity *sum = [result sumQuantity];
              
              if (sum) {
@@ -105,11 +104,7 @@
              
              [subscriber sendCompleted];
          } error:^(NSError *error) {
-             // don't care about the actual error in this case
-             // as it could be due to not having access to HK data point
-             // or having no data points to report so send a nil
-             [subscriber sendNext:nil];
-             [subscriber sendCompleted];
+             [subscriber sendError:error];
          }];
         
         return (RACDisposable *)nil;
@@ -131,8 +126,8 @@
         // create individual signals for each of our desired data points; this will allow
         // us to retrieve their values all in parallel, instead of sequentially like the
         // example Apple app does, which in turn requires longer to complete
-        RACSignal *weightSignal = [self.healthStore aapl_mostRecentQuantitySampleOfType:weightType predicate:nil];
-        RACSignal *heightSignal = [self.healthStore aapl_mostRecentQuantitySampleOfType:heightType predicate:todayPredicate];
+        RACSignal *weightSignal = [self.healthStore aapl_mostRecentQuantitySampleOfType:weightType predicate:todayPredicate];
+        RACSignal *heightSignal = [self.healthStore aapl_mostRecentQuantitySampleOfType:heightType predicate:nil];
         RACSignal *dateOfBirthSignal = [self.healthStore rac_dateOfBirth];
         RACSignal *biologicalSexSignal = [self.healthStore rac_biologicalSex];
         
@@ -152,11 +147,7 @@
              }
              [subscriber sendCompleted];
          } error:^(NSError *error) {
-             // don't care about the actual error in this case
-             // as it could be due to not having access to HK data point
-             // or having no data points to report so send a nil
-             [subscriber sendNext:nil];
-             [subscriber sendCompleted];
+             [subscriber sendError:error];
          }];
         
         return (RACDisposable *)nil;
