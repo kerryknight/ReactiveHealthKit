@@ -22,6 +22,16 @@ profile
 *.xcworkspace
 !default.xcworkspace
 
+#Example
+Example/Pods/
+Example/Podfile.lock
+Example/*.xcworkspace
+
+#Tests
+ReactiveHealthKitTests/Pods/
+ReactiveHealthKitTests/Podfile.lock
+ReactiveHealthKitTests/*.xcworkspace
+
 # CocoaPods
 Podfile.lock
 Pods/
