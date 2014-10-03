@@ -17,13 +17,15 @@
                                       sortDescriptors:(NSArray *)sortDescriptors
 {
     
-    return [RACSignal createSignal:^(id<RACSubscriber> subscriber) {
+    return [[RACSignal createSignal:^(id<RACSubscriber> subscriber) {
+        __block HKSampleQuery *qry = nil;
         
         [self rac_executeSampleQueryWithSampleOfType:sampleType
                                            predicate:predicate
                                                limit:limit
                                      sortDescriptors:sortDescriptors
                                           completion:^(HKSampleQuery *query, NSArray *results, NSError *error) {
+                                              qry = query;
                                               
                                               if (!error) {
                                                   // REMEMBER: just because we don't have an error here, doesn't
@@ -37,20 +39,25 @@
                                                   [subscriber sendError:error];
                                               }
                                           }];
-        return (RACDisposable *)nil;
-    }];
+        return [RACDisposable disposableWithBlock: ^{
+            [self stopQuery:qry];
+        }];
+    }]
+    setNameWithFormat:@"rac_executeSampleQueryWithSampleOfType:%@ predicate:%@ limit:%lu sortDescriptors:%@", sampleType, predicate, (unsigned long)limit, sortDescriptors];
 }
 
 - (RACSignal *)rac_executeStatisticsQueryWithQuantityType:(HKQuantityType *)quantityType
                                   quantitySamplePredicate:(NSPredicate *)quantitySamplePredicate
                                                   options:(HKStatisticsOptions)options
 {
-    return [RACSignal createSignal:^(id<RACSubscriber> subscriber) {
+    return [[RACSignal createSignal:^(id<RACSubscriber> subscriber) {
+        __block HKStatisticsQuery *qry = nil;
         
         [self rac_executeStatisticsQueryWithQuantityType:quantityType
                                  quantitySamplePredicate:quantitySamplePredicate
                                                  options:options
                                               completion:^(HKStatisticsQuery *query, HKStatistics *result, NSError *error) {
+                                                  qry = query;
                                                   
                                                   if (!error) {
                                                       // REMEMBER: just because we don't have an error here, doesn't
@@ -64,8 +71,11 @@
                                                       [subscriber sendError:error];
                                                   }
                                               }];
-        return (RACDisposable *)nil;
-    }];
+        return [RACDisposable disposableWithBlock: ^{
+            [self stopQuery:qry];
+        }];
+    }]
+    setNameWithFormat:@"rac_executeStatisticsQueryWithQuantityType:%@ quantitySamplePredicate:%@ options:%lu", quantityType, quantitySamplePredicate, options];
 }
 
 #pragma mark - Private Methods

@@ -158,13 +158,14 @@ describe(@"HKHealthStore+RACQuerying", ^{
                 mockQuery = nil;
             });
             
-            it(@"should return query and results data", ^{
+            it(@"should return query and results data and call stopQuery:", ^{
                 [[mock rac_executeSampleQueryWithSampleOfType:OCMOCK_ANY predicate:OCMOCK_ANY limit:0 sortDescriptors:OCMOCK_ANY] subscribeNext:^(RACTuple *data) {
                     HKStatisticsQuery *query = data.first;
                     NSArray *results = data.second;
                     
                     [[query shouldNot] beNil];
                     [[results shouldNot] beNil];
+                    [[mock should] receive:@selector(stopQuery:)];
                 }];
             });
         });
@@ -184,9 +185,10 @@ describe(@"HKHealthStore+RACQuerying", ^{
                 mockQuery = nil;
             });
             
-            it(@"should return an error", ^{
+            it(@"should return an error and call stopQuery:", ^{
                 [[mock rac_executeSampleQueryWithSampleOfType:OCMOCK_ANY predicate:OCMOCK_ANY limit:0 sortDescriptors:OCMOCK_ANY] subscribeError:^(NSError *error) {
                     [[theValue(error.code) should] equal:@(err.code)];
+                    [[mock should] receive:@selector(stopQuery:)];
                 }];
             });
         });
@@ -226,13 +228,14 @@ describe(@"HKHealthStore+RACQuerying", ^{
                 mockQuery = nil;
             });
             
-            it(@"should return query and result data", ^{
+            it(@"should return query and result data and call stopQuery:", ^{
                 [[mock rac_executeStatisticsQueryWithQuantityType:OCMOCK_ANY quantitySamplePredicate:OCMOCK_ANY options:0] subscribeNext:^(RACTuple *data) {
                     HKStatisticsQuery *query = data.first;
                     HKStatistics *result = data.second;
                     
                     [[query shouldNot] beNil];
                     [[result shouldNot] beNil];
+                    [[mock should] receive:@selector(stopQuery:)];
                 }];
             });
         });
@@ -253,9 +256,10 @@ describe(@"HKHealthStore+RACQuerying", ^{
                 mockQuery = nil;
             });
             
-            it(@"should return an error", ^{
+            it(@"should return an error and callStopQuery:", ^{
                 [[mock rac_executeStatisticsQueryWithQuantityType:OCMOCK_ANY quantitySamplePredicate:OCMOCK_ANY options:0] subscribeError:^(NSError *error) {
                     [[theValue(error.code) should] equal:@(err.code)];
+                    [[mock should] receive:@selector(stopQuery:)];
                 }];
             });
         });

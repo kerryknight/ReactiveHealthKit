@@ -13,50 +13,43 @@
 #pragma mark - HKHealthStore
 - (RACSignal *)rac_requestAuthorizationToShareTypes:(NSSet *)typesToShare readTypes:(NSSet *)typesToRead
 {
-    @weakify(self)
-    return [RACSignal createSignal:^(id<RACSubscriber> subscriber) {
-                @strongify(self)
+    return [[RACSignal createSignal:^(id<RACSubscriber> subscriber) {
+        [self requestAuthorizationToShareTypes:typesToShare readTypes:typesToRead completion:^(BOOL success, NSError *error) {
+            if (!error) {
+                [subscriber sendNext:@(success)];
+                [subscriber sendCompleted];
+            }
+            else {
+                [subscriber sendError:error];
+            }
+        }];
         
-                [self requestAuthorizationToShareTypes:typesToShare readTypes:typesToRead completion:^(BOOL success, NSError *error) {
-                    if (!error) {
-                        [subscriber sendNext:@(success)];
-                        [subscriber sendCompleted];
-                    }
-                    else {
-                        [subscriber sendError:error];
-                    }
-                }];
-        
-                return (RACDisposable *)nil;
-            }];
+        return (RACDisposable *)nil;
+    }]
+    setNameWithFormat:@"rac_requestAuthorizationToShareTypes:%@ readTypes:%@", typesToShare, typesToRead];
 }
 
 - (RACSignal *)rac_saveObject:(HKObject *)object
 {
-    @weakify(self)
-    return [RACSignal createSignal:^(id<RACSubscriber> subscriber) {
-                @strongify(self)
+    return [[RACSignal createSignal:^(id<RACSubscriber> subscriber) {
+        [self saveObject:object withCompletion:^(BOOL success, NSError *error) {
+            if (error == nil) {
+                [subscriber sendNext:@(success)];
+                [subscriber sendCompleted];
+            }
+            else {
+                [subscriber sendError:error];
+            }
+        }];
         
-                [self saveObject:object withCompletion:^(BOOL success, NSError *error) {
-                    if (error == nil) {
-                        [subscriber sendNext:@(success)];
-                        [subscriber sendCompleted];
-                    }
-                    else {
-                        [subscriber sendError:error];
-                    }
-                }];
-        
-                return (RACDisposable *)nil;
-            }];
+        return (RACDisposable *)nil;
+    }]
+    setNameWithFormat:@"rac_saveObject:%@", object];
 }
 
 - (RACSignal *)rac_saveObjects:(NSArray *)objects
 {
-    @weakify(self)
-    return [RACSignal createSignal:^(id<RACSubscriber> subscriber) {
-        @strongify(self)
-        
+    return [[RACSignal createSignal:^(id<RACSubscriber> subscriber) {
         [self saveObjects:objects withCompletion:^(BOOL success, NSError *error) {
             if (!error) {
                 [subscriber sendNext:@(success)];
@@ -68,15 +61,13 @@
         }];
         
         return (RACDisposable *)nil;
-    }];
+    }]
+    setNameWithFormat:@"rac_saveObjects:%@", objects];
 }
 
 - (RACSignal *)rac_deleteObject:(HKObject *)object
 {
-    @weakify(self)
-    return [RACSignal createSignal:^(id<RACSubscriber> subscriber) {
-        @strongify(self)
-        
+    return [[RACSignal createSignal:^(id<RACSubscriber> subscriber) {
         [self deleteObject:object withCompletion:^(BOOL success, NSError *error) {
             if (!error) {
                 [subscriber sendNext:@(success)];
@@ -88,15 +79,13 @@
         }];
         
         return (RACDisposable *)nil;
-    }];
+    }]
+    setNameWithFormat:@"rac_deleteObject:%@", object];
 }
 
 - (RACSignal *)rac_dateOfBirth
 {
-    @weakify(self)
-    return [RACSignal createSignal:^(id<RACSubscriber> subscriber) {
-        @strongify(self)
-        
+    return [[RACSignal createSignal:^(id<RACSubscriber> subscriber) {
         NSError *error = nil;
         NSDate *dateOfBirth = [self dateOfBirthWithError:&error];
         
@@ -113,15 +102,13 @@
         }
         
         return (RACDisposable *)nil;
-    }];
+    }]
+    setNameWithFormat:@"rac_dateOfBirth"];
 }
 
 - (RACSignal *)rac_biologicalSex
 {
-    @weakify(self)
-    return [RACSignal createSignal:^(id<RACSubscriber> subscriber) {
-        @strongify(self)
-        
+    return [[RACSignal createSignal:^(id<RACSubscriber> subscriber) {
         NSError *error = nil;
         HKBiologicalSexObject *biologicalSexObject = [self biologicalSexWithError:&error];
         
@@ -138,15 +125,13 @@
         }
         
         return (RACDisposable *)nil;
-    }];
+    }]
+    setNameWithFormat:@"rac_biologicalSex"];
 }
 
 - (RACSignal *)rac_bloodType
 {
-    @weakify(self)
-    return [RACSignal createSignal:^(id<RACSubscriber> subscriber) {
-        @strongify(self)
-        
+    return [[RACSignal createSignal:^(id<RACSubscriber> subscriber) {
         NSError *error = nil;
         HKBloodTypeObject *bloodTypeObject = [self bloodTypeWithError:&error];
         
@@ -163,16 +148,14 @@
         }
         
         return (RACDisposable *)nil;
-    }];
+    }]
+    setNameWithFormat:@"rac_bloodType"];
 }
 
 #pragma mark - HKHealthStore (HKWorkout)
 - (RACSignal *)rac_addSamples:(NSArray *)samples toWorkout:(HKWorkout *)workout
 {
-    @weakify(self)
-    return [RACSignal createSignal:^(id<RACSubscriber> subscriber) {
-        @strongify(self)
-        
+    return [[RACSignal createSignal:^(id<RACSubscriber> subscriber) {
         [self addSamples:samples toWorkout:workout completion:^(BOOL success, NSError *error) {
             if (!error) {
                 [subscriber sendNext:@(success)];
@@ -184,15 +167,14 @@
         }];
         
         return (RACDisposable *)nil;
-    }];
+    }]
+    setNameWithFormat:@"rac_addSamples:%@ toWorkout:%@", samples, workout];
 }
 
 #pragma mark - HKHealthStore (HKBackgroundDelivery)
 - (RACSignal *)rac_enableBackgroundDeliveryForType:(HKObjectType *)type frequency:(HKUpdateFrequency)frequency
 {
-    @weakify(self)
-    return [RACSignal createSignal:^(id<RACSubscriber> subscriber) {
-        @strongify(self)
+    return [[RACSignal createSignal:^(id<RACSubscriber> subscriber) {
         [self enableBackgroundDeliveryForType:type frequency:frequency withCompletion:^(BOOL success, NSError *error) {
             if (!error) {
                 [subscriber sendNext:@(success)];
@@ -203,15 +185,13 @@
             }
         }];
         return (RACDisposable *)nil;
-    }];
+    }]
+    setNameWithFormat:@"rac_enableBackgroundDeliveryForType:%@ frequency:%ld", type, frequency];
 }
 
 - (RACSignal *)rac_disableBackgroundDeliveryForType:(HKObjectType *)type
 {
-    @weakify(self)
-    return [RACSignal createSignal:^(id<RACSubscriber> subscriber) {
-        @strongify(self)
-        
+    return [[RACSignal createSignal:^(id<RACSubscriber> subscriber) {
         [self disableBackgroundDeliveryForType:type withCompletion:^(BOOL success, NSError *error) {
             if (!error) {
                 [subscriber sendNext:@(success)];
@@ -222,15 +202,13 @@
             }
         }];
         return (RACDisposable *)nil;
-    }];
+    }]
+    setNameWithFormat:@"rac_disableBackgroundDeliveryForType:%@", type];
 }
 
 - (RACSignal *)rac_disableAllBackgroundDelivery
 {
-    @weakify(self)
-    return [RACSignal createSignal:^(id<RACSubscriber> subscriber) {
-        @strongify(self)
-        
+    return [[RACSignal createSignal:^(id<RACSubscriber> subscriber) {
         [self disableAllBackgroundDeliveryWithCompletion:^(BOOL success, NSError *error) {
             if (!error) {
                 [subscriber sendNext:@(success)];
@@ -241,7 +219,8 @@
             }
         }];
         return (RACDisposable *)nil;
-    }];
+    }]
+    setNameWithFormat:@"rac_disableAllBackgroundDelivery"];
 }
 
 @end
