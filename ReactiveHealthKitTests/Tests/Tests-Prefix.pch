@@ -13,19 +13,3 @@
     #import "ReactiveHealthKit.h"
 
 #endif
-
-#define DLog(fmt, ...) NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
-#define XCODE_COLORS_ESCAPE @"\033["
-#define XCODE_COLORS_RESET     XCODE_COLORS_ESCAPE @";"   // Clear any foreground or background color
-#define DLogBlue(frmt, ...) NSLog((XCODE_COLORS_ESCAPE @"fg23,148,205; %s [Line %d] " frmt XCODE_COLORS_RESET), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
-#define DLogGreen(frmt, ...) NSLog((XCODE_COLORS_ESCAPE @"fg0,255,0; %s [Line %d] " frmt XCODE_COLORS_RESET), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
-#define DLogRed(frmt, ...) NSLog((XCODE_COLORS_ESCAPE @"fg255,0,0; %s [Line %d] " frmt XCODE_COLORS_RESET), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
-#define DLogOrange(frmt, ...) NSLog((XCODE_COLORS_ESCAPE @"fg255,127,0; %s [Line %d] " frmt XCODE_COLORS_RESET), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
-#define DLogPurple(frmt, ...) NSLog((XCODE_COLORS_ESCAPE @"fg123,48,105; %s [Line %d] " frmt XCODE_COLORS_RESET), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
-#define DLogYellow(frmt, ...) NSLog((XCODE_COLORS_ESCAPE @"fg255,255,0; %s [Line %d] " frmt XCODE_COLORS_RESET), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
-#define DLogCyan(frmt, ...) NSLog((XCODE_COLORS_ESCAPE @"fg0,255,255; %s [Line %d] " frmt XCODE_COLORS_RESET), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
-
-// ensure these are the only DLog* messages left in committed code
-#define DLogError(frmt, ...) NSLog((XCODE_COLORS_ESCAPE @"fg255,0,0; %s [Line %d] " frmt XCODE_COLORS_RESET), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);//red
-#define DLogWarning(frmt, ...) NSLog((XCODE_COLORS_ESCAPE @"fg255,127,0; %s [Line %d] " frmt XCODE_COLORS_RESET), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);//yellow
-#define DLogSuccess(frmt, ...) NSLog((XCODE_COLORS_ESCAPE @"fg0,255,0; %s [Line %d] " frmt XCODE_COLORS_RESET), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);//green
