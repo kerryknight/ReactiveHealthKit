@@ -13,7 +13,7 @@
 		6003F5BA195388D20070C39A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5B8195388D20070C39A /* InfoPlist.strings */; };
 		E5296111022AC1948A1994D9 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E7EB98F840FBDAE2BE792B34 /* libPods.a */; };
 		F1287E3119DDAB8E00ABFC16 /* HKHealthStore+RACQuerying_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = F1287E3019DDAB8E00ABFC16 /* HKHealthStore+RACQuerying_Tests.m */; };
-		F16D110219DF187F00147542 /* HKHealthStore+RAC_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5BB195388D20070C39A /* HKHealthStore+RAC_Tests.m */; };
+		F1C49D7019E4F0F7008701D1 /* HKHealthStore+RAC_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5BB195388D20070C39A /* HKHealthStore+RAC_Tests.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -227,7 +227,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F1287E3119DDAB8E00ABFC16 /* HKHealthStore+RACQuerying_Tests.m in Sources */,
-				F16D110219DF187F00147542 /* HKHealthStore+RAC_Tests.m in Sources */,
+				F1C49D7019E4F0F7008701D1 /* HKHealthStore+RAC_Tests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

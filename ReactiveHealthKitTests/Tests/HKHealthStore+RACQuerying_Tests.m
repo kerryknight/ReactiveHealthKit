@@ -9,13 +9,13 @@
 #import <objc/runtime.h>
 
 @interface HKHealthStore (RACQuerying_Testing)
-- (void)rac_executeSampleQueryWithSampleOfType:(HKSampleType *)sampleType
+- (void)rac_createSampleQueryWithSampleOfType:(HKSampleType *)sampleType
                                      predicate:(NSPredicate *)predicate
                                          limit:(NSUInteger)limit
                                sortDescriptors:(NSArray *)sortDescriptors
                                     completion:(void (^)(HKSampleQuery *query, NSArray *results, NSError *error))completion;
 
-- (void)rac_executeStatisticsQueryWithQuantityType:(HKQuantityType *)quantityType
+- (void)rac_createStatisticsQueryWithQuantityType:(HKQuantityType *)quantityType
                            quantitySamplePredicate:(NSPredicate *)quantitySamplePredicate
                                            options:(HKStatisticsOptions)options
                                         completion:(void (^)(HKStatisticsQuery *query, HKStatistics *result, NSError *error))completion;
@@ -30,80 +30,100 @@
 
 @implementation ReactiveHealthKitQueryTestHelpers
 + (void)swizzleSuccessMethods {
-    method_exchangeImplementations(class_getInstanceMethod([HKHealthStore class], @selector(rac_executeSampleQueryWithSampleOfType:predicate:limit:sortDescriptors:completion:)),
-                                   class_getInstanceMethod([ReactiveHealthKitQueryTestHelpers class], @selector(stub_success_rac_executeSampleQueryWithSampleOfType:predicate:limit:sortDescriptors:completion:)));
+    method_exchangeImplementations(class_getInstanceMethod([HKHealthStore class], @selector(rac_createSampleQueryWithSampleOfType:predicate:limit:sortDescriptors:completion:)),
+                                   class_getInstanceMethod([ReactiveHealthKitQueryTestHelpers class], @selector(stub_success_rac_createSampleQueryWithSampleOfType:predicate:limit:sortDescriptors:completion:)));
     
-    method_exchangeImplementations(class_getInstanceMethod([HKHealthStore class], @selector(rac_executeStatisticsQueryWithQuantityType:quantitySamplePredicate:options:completion:)),
-                                   class_getInstanceMethod([ReactiveHealthKitQueryTestHelpers class], @selector(stub_success_rac_executeStatisticsQueryWithQuantityType:quantitySamplePredicate:options:completion:)));
+    method_exchangeImplementations(class_getInstanceMethod([HKHealthStore class], @selector(rac_createStatisticsQueryWithQuantityType:quantitySamplePredicate:options:completion:)),
+                                   class_getInstanceMethod([ReactiveHealthKitQueryTestHelpers class], @selector(stub_success_rac_createStatisticsQueryWithQuantityType:quantitySamplePredicate:options:completion:)));
 }
 
 + (void)unswizzleSuccessMethods {
-    method_exchangeImplementations(class_getInstanceMethod([ReactiveHealthKitQueryTestHelpers class], @selector(stub_success_rac_executeSampleQueryWithSampleOfType:predicate:limit:sortDescriptors:completion:)),
-                                   class_getInstanceMethod([HKHealthStore class], @selector(rac_executeSampleQueryWithSampleOfType:predicate:limit:sortDescriptors:completion:)));
+    method_exchangeImplementations(class_getInstanceMethod([ReactiveHealthKitQueryTestHelpers class], @selector(stub_success_rac_createSampleQueryWithSampleOfType:predicate:limit:sortDescriptors:completion:)),
+                                   class_getInstanceMethod([HKHealthStore class], @selector(rac_createSampleQueryWithSampleOfType:predicate:limit:sortDescriptors:completion:)));
     
-    method_exchangeImplementations(class_getInstanceMethod([ReactiveHealthKitQueryTestHelpers class], @selector(stub_success_rac_executeStatisticsQueryWithQuantityType:quantitySamplePredicate:options:completion:)),
-                                   class_getInstanceMethod([HKHealthStore class], @selector(rac_executeStatisticsQueryWithQuantityType:quantitySamplePredicate:options:completion:)));
+    method_exchangeImplementations(class_getInstanceMethod([ReactiveHealthKitQueryTestHelpers class], @selector(stub_success_rac_createStatisticsQueryWithQuantityType:quantitySamplePredicate:options:completion:)),
+                                   class_getInstanceMethod([HKHealthStore class], @selector(rac_createStatisticsQueryWithQuantityType:quantitySamplePredicate:options:completion:)));
 }
 
 + (void)swizzleErrorMethods {
-    method_exchangeImplementations(class_getInstanceMethod([HKHealthStore class], @selector(rac_executeSampleQueryWithSampleOfType:predicate:limit:sortDescriptors:completion:)),
-                                   class_getInstanceMethod([ReactiveHealthKitQueryTestHelpers class], @selector(stub_error_rac_executeSampleQueryWithSampleOfType:predicate:limit:sortDescriptors:completion:)));
+    method_exchangeImplementations(class_getInstanceMethod([HKHealthStore class], @selector(rac_createSampleQueryWithSampleOfType:predicate:limit:sortDescriptors:completion:)),
+                                   class_getInstanceMethod([ReactiveHealthKitQueryTestHelpers class], @selector(stub_error_rac_createSampleQueryWithSampleOfType:predicate:limit:sortDescriptors:completion:)));
     
-    method_exchangeImplementations(class_getInstanceMethod([HKHealthStore class], @selector(rac_executeStatisticsQueryWithQuantityType:quantitySamplePredicate:options:completion:)),
-                                   class_getInstanceMethod([ReactiveHealthKitQueryTestHelpers class], @selector(stub_error_rac_executeStatisticsQueryWithQuantityType:quantitySamplePredicate:options:completion:)));
+    method_exchangeImplementations(class_getInstanceMethod([HKHealthStore class], @selector(rac_createStatisticsQueryWithQuantityType:quantitySamplePredicate:options:completion:)),
+                                   class_getInstanceMethod([ReactiveHealthKitQueryTestHelpers class], @selector(stub_error_rac_createStatisticsQueryWithQuantityType:quantitySamplePredicate:options:completion:)));
 }
 
 + (void)unswizzleErrorMethods {
-    method_exchangeImplementations(class_getInstanceMethod([ReactiveHealthKitQueryTestHelpers class], @selector(stub_error_rac_executeSampleQueryWithSampleOfType:predicate:limit:sortDescriptors:completion:)),
-                                   class_getInstanceMethod([HKHealthStore class], @selector(rac_executeSampleQueryWithSampleOfType:predicate:limit:sortDescriptors:completion:)));
+    method_exchangeImplementations(class_getInstanceMethod([ReactiveHealthKitQueryTestHelpers class], @selector(stub_error_rac_createSampleQueryWithSampleOfType:predicate:limit:sortDescriptors:completion:)),
+                                   class_getInstanceMethod([HKHealthStore class], @selector(rac_createSampleQueryWithSampleOfType:predicate:limit:sortDescriptors:completion:)));
     
-    method_exchangeImplementations(class_getInstanceMethod([ReactiveHealthKitQueryTestHelpers class], @selector(stub_error_rac_executeStatisticsQueryWithQuantityType:quantitySamplePredicate:options:completion:)),
-                                   class_getInstanceMethod([HKHealthStore class], @selector(rac_executeStatisticsQueryWithQuantityType:quantitySamplePredicate:options:completion:)));
+    method_exchangeImplementations(class_getInstanceMethod([ReactiveHealthKitQueryTestHelpers class], @selector(stub_error_rac_createStatisticsQueryWithQuantityType:quantitySamplePredicate:options:completion:)),
+                                   class_getInstanceMethod([HKHealthStore class], @selector(rac_createStatisticsQueryWithQuantityType:quantitySamplePredicate:options:completion:)));
 }
 
-- (void)stub_success_rac_executeSampleQueryWithSampleOfType:(HKSampleType *)sampleType
+#pragma mark - stubbed methods to swizzle in
+- (HKSampleQuery *)stub_success_rac_createSampleQueryWithSampleOfType:(HKSampleType *)sampleType
                                           predicate:(NSPredicate *)predicate
                                               limit:(NSUInteger)limit
                                     sortDescriptors:(NSArray *)sortDescriptors
                                          completion:(void (^)(HKSampleQuery *query, NSArray *results, NSError *error))completion
 {
-    HKSampleQuery *fakeQuery = [[HKSampleQuery alloc] initWithSampleType:nil predicate:nil limit:1 sortDescriptors:nil resultsHandler:nil];
-    NSArray *resultArray = @[];
-    completion(fakeQuery, resultArray, nil);
+    HKCorrelationType *foodType = [HKObjectType correlationTypeForIdentifier:HKCorrelationTypeIdentifierFood];
+    
+    __block HKSampleQuery *fakeQuery = [[HKSampleQuery alloc] initWithSampleType:foodType predicate:nil limit:1 sortDescriptors:nil resultsHandler:^(HKSampleQuery *query, NSArray *results, NSError *error) {
+        
+        NSArray *resultArray = @[];
+        completion(fakeQuery, resultArray, nil);
+    }];
+    
+    return fakeQuery;
 }
 
-- (void)stub_error_rac_executeSampleQueryWithSampleOfType:(HKSampleType *)sampleType
+- (HKSampleQuery *)stub_error_rac_createSampleQueryWithSampleOfType:(HKSampleType *)sampleType
                                                   predicate:(NSPredicate *)predicate
                                                       limit:(NSUInteger)limit
                                             sortDescriptors:(NSArray *)sortDescriptors
                                                  completion:(void (^)(HKSampleQuery *query, NSArray *results, NSError *error))completion
 {
-    HKSampleQuery *fakeQuery = [[HKSampleQuery alloc] initWithSampleType:nil predicate:nil limit:1 sortDescriptors:nil resultsHandler:nil];
-    NSError *err = [NSError errorWithDomain:@"" code:999 userInfo:nil];
-    completion(fakeQuery, nil, err);
-}
-
-- (void)stub_success_rac_executeStatisticsQueryWithQuantityType:(HKQuantityType *)quantityType
-                                        quantitySamplePredicate:(NSPredicate *)quantitySamplePredicate
-                                                        options:(HKStatisticsOptions)options
-                                                     completion:(void (^)(HKStatisticsQuery *query, HKStatistics *result, NSError *error))completion
-{
-    HKQuantityType *fakeType = [[HKQuantityType alloc] initWithCoder:nil];
-    HKStatisticsQuery *fakeQuery = [[HKStatisticsQuery alloc] initWithQuantityType:fakeType quantitySamplePredicate:nil options:0 completionHandler:nil];
-    id fakeStatisticObject = [NSObject new];
+    HKCorrelationType *foodType = [HKObjectType correlationTypeForIdentifier:HKCorrelationTypeIdentifierFood];
     
-    completion(fakeQuery, fakeStatisticObject, nil);
+    __block HKSampleQuery *fakeQuery = [[HKSampleQuery alloc] initWithSampleType:foodType predicate:nil limit:1 sortDescriptors:nil resultsHandler:^(HKSampleQuery *query, NSArray *results, NSError *error) {
+        
+        NSError *err = [NSError errorWithDomain:@"" code:999 userInfo:nil];
+        completion(fakeQuery, nil, err);
+    }];
+    
+    return fakeQuery;
 }
 
-- (void)stub_error_rac_executeStatisticsQueryWithQuantityType:(HKQuantityType *)quantityType
+- (HKStatisticsQuery *)stub_success_rac_createStatisticsQueryWithQuantityType:(HKQuantityType *)quantityType
                                         quantitySamplePredicate:(NSPredicate *)quantitySamplePredicate
                                                         options:(HKStatisticsOptions)options
                                                      completion:(void (^)(HKStatisticsQuery *query, HKStatistics *result, NSError *error))completion
 {
     HKQuantityType *fakeType = [[HKQuantityType alloc] initWithCoder:nil];
-    HKStatisticsQuery *fakeQuery = [[HKStatisticsQuery alloc] initWithQuantityType:fakeType quantitySamplePredicate:nil options:0 completionHandler:nil];
-    NSError *err = [NSError errorWithDomain:@"" code:999 userInfo:nil];
-    completion(fakeQuery, nil, err);
+    HKStatisticsQuery *fakeQuery = [[HKStatisticsQuery alloc] initWithQuantityType:fakeType quantitySamplePredicate:nil options:0 completionHandler:^(HKStatisticsQuery *query, HKStatistics *result, NSError *error) {
+        
+        id fakeStatisticObject = [NSObject new];
+        completion(fakeQuery, fakeStatisticObject, nil);
+    }];
+    
+    return fakeQuery;
+}
+
+- (HKStatisticsQuery *)stub_error_rac_createStatisticsQueryWithQuantityType:(HKQuantityType *)quantityType
+                                        quantitySamplePredicate:(NSPredicate *)quantitySamplePredicate
+                                                        options:(HKStatisticsOptions)options
+                                                     completion:(void (^)(HKStatisticsQuery *query, HKStatistics *result, NSError *error))completion
+{
+    HKQuantityType *fakeType = [[HKQuantityType alloc] initWithCoder:nil];
+    HKStatisticsQuery *fakeQuery = [[HKStatisticsQuery alloc] initWithQuantityType:fakeType quantitySamplePredicate:nil options:0 completionHandler:^(HKStatisticsQuery *query, HKStatistics *result, NSError *error) {
+       
+        NSError *err = [NSError errorWithDomain:@"" code:999 userInfo:nil];
+        completion(fakeQuery, nil, err);
+    }];
+    
+    return fakeQuery;
 }
 
 @end
@@ -118,9 +138,11 @@ describe(@"HKHealthStore+RACQuerying", ^{
     
     beforeEach(^{
         mock = [OCMockObject partialMockForObject:healthStore];
+        [ReactiveHealthKitQueryTestHelpers swizzleSuccessMethods];
     });
     
     afterEach(^{
+        [ReactiveHealthKitQueryTestHelpers unswizzleSuccessMethods];
         [mock stopMocking];
         mock = nil;
     });
@@ -144,20 +166,6 @@ describe(@"HKHealthStore+RACQuerying", ^{
         });
         
         context(@"query success", ^{
-            __block id mockQuery;
-            HKSampleQuery *queryToMock = [[HKSampleQuery alloc] initWithSampleType:nil predicate:nil limit:1 sortDescriptors:nil resultsHandler:nil];
-            
-            beforeEach(^{
-                mockQuery = [OCMockObject partialMockForObject:queryToMock];
-                [ReactiveHealthKitQueryTestHelpers swizzleSuccessMethods];
-            });
-            
-            afterEach(^{
-                [ReactiveHealthKitQueryTestHelpers unswizzleSuccessMethods];
-                [mockQuery stopMocking];
-                mockQuery = nil;
-            });
-            
             it(@"should return query and results data and call stopQuery:", ^{
                 [[mock rac_executeSampleQueryWithSampleOfType:OCMOCK_ANY predicate:OCMOCK_ANY limit:0 sortDescriptors:OCMOCK_ANY] subscribeNext:^(RACTuple *data) {
                     HKStatisticsQuery *query = data.first;
@@ -171,20 +179,6 @@ describe(@"HKHealthStore+RACQuerying", ^{
         });
 
         context(@"query failure", ^{
-            __block id mockQuery;
-            HKSampleQuery *queryToMock = [[HKSampleQuery alloc] initWithSampleType:nil predicate:nil limit:1 sortDescriptors:nil resultsHandler:nil];
-            
-            beforeEach(^{
-                mockQuery = [OCMockObject partialMockForObject:queryToMock];
-                [ReactiveHealthKitQueryTestHelpers swizzleErrorMethods];
-            });
-            
-            afterEach(^{
-                [ReactiveHealthKitQueryTestHelpers unswizzleErrorMethods];
-                [mockQuery stopMocking];
-                mockQuery = nil;
-            });
-            
             it(@"should return an error and call stopQuery:", ^{
                 [[mock rac_executeSampleQueryWithSampleOfType:OCMOCK_ANY predicate:OCMOCK_ANY limit:0 sortDescriptors:OCMOCK_ANY] subscribeError:^(NSError *error) {
                     [[theValue(error.code) should] equal:@(err.code)];
@@ -213,21 +207,6 @@ describe(@"HKHealthStore+RACQuerying", ^{
         });
         
         context(@"query success", ^{
-            __block id mockQuery;
-            HKQuantityType *fakeType = [[HKQuantityType alloc] initWithCoder:nil];
-            HKStatisticsQuery *queryToMock = [[HKStatisticsQuery alloc] initWithQuantityType:fakeType quantitySamplePredicate:nil options:0 completionHandler:nil];
-            
-            beforeEach(^{
-                mockQuery = [OCMockObject partialMockForObject:queryToMock];
-                [ReactiveHealthKitQueryTestHelpers swizzleSuccessMethods];
-            });
-            
-            afterEach(^{
-                [ReactiveHealthKitQueryTestHelpers unswizzleSuccessMethods];
-                [mockQuery stopMocking];
-                mockQuery = nil;
-            });
-            
             it(@"should return query and result data and call stopQuery:", ^{
                 [[mock rac_executeStatisticsQueryWithQuantityType:OCMOCK_ANY quantitySamplePredicate:OCMOCK_ANY options:0] subscribeNext:^(RACTuple *data) {
                     HKStatisticsQuery *query = data.first;
@@ -241,21 +220,6 @@ describe(@"HKHealthStore+RACQuerying", ^{
         });
         
         context(@"query failure", ^{
-            __block id mockQuery;
-            HKQuantityType *fakeType = [[HKQuantityType alloc] initWithCoder:nil];
-            HKStatisticsQuery *queryToMock = [[HKStatisticsQuery alloc] initWithQuantityType:fakeType quantitySamplePredicate:nil options:0 completionHandler:nil];
-            
-            beforeEach(^{
-                mockQuery = [OCMockObject partialMockForObject:queryToMock];
-                [ReactiveHealthKitQueryTestHelpers swizzleErrorMethods];
-            });
-            
-            afterEach(^{
-                [ReactiveHealthKitQueryTestHelpers unswizzleErrorMethods];
-                [mockQuery stopMocking];
-                mockQuery = nil;
-            });
-            
             it(@"should return an error and callStopQuery:", ^{
                 [[mock rac_executeStatisticsQueryWithQuantityType:OCMOCK_ANY quantitySamplePredicate:OCMOCK_ANY options:0] subscribeError:^(NSError *error) {
                     [[theValue(error.code) should] equal:@(err.code)];

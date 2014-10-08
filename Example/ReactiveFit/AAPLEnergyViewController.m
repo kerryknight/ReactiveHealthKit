@@ -55,57 +55,56 @@
     RACSignal *energyBurnedSignal = [self fetchSumOfSamplesTodayForType:activeEnergyBurnType unit:[HKUnit jouleUnit]];
     RACSignal *basalBurnSignal = [self fetchTotalBasalBurn];
     
-    @weakify(self)
     [[[RACSignal
-       zip:@[energyConsumedSignal, energyBurnedSignal, basalBurnSignal]
-       reduce:^id(NSNumber *totalJoulesConsumed, NSNumber *activeEnergyBurned, HKQuantity *basalEnergyBurn) {
-           return RACTuplePack(totalJoulesConsumed, activeEnergyBurned, basalEnergyBurn);
-       }]
-      // ensure we deliver on main thread as HealthKit queries always use a background thread
-      deliverOn:[RACScheduler mainThreadScheduler]]
-     subscribeNext:^(RACTuple *data) {
-         @strongify(self)
+    zip:@[energyConsumedSignal, energyBurnedSignal, basalBurnSignal]
+    reduce:^id(NSNumber *totalJoulesConsumed, NSNumber *activeEnergyBurned, HKQuantity *basalEnergyBurn) {
+        return RACTuplePack(totalJoulesConsumed, activeEnergyBurned, basalEnergyBurn);
+    }]
+    // ensure we deliver on main thread as HealthKit queries always use a background thread
+    deliverOn:[RACScheduler mainThreadScheduler]]
+    subscribeNext:^(RACTuple *data) {
          
-         NSNumber *totalJoulesConsumed = data.first;
-         NSNumber *activeEnergyBurned = data.second;
-         HKQuantity *basalEnergyBurn = data.third;
+        NSNumber *totalJoulesConsumed = data.first;
+        NSNumber *activeEnergyBurned = data.second;
+        HKQuantity *basalEnergyBurn = data.third;
          
-         self.energyConsumed = totalJoulesConsumed ? [totalJoulesConsumed doubleValue] : 0;
-         self.activeEnergyBurned = activeEnergyBurned ? [activeEnergyBurned doubleValue] : 0;
-         self.restingEnergyBurned = basalEnergyBurn ? [basalEnergyBurn doubleValueForUnit:[HKUnit jouleUnit]] : 0;
-         self.netEnergy = self.energyConsumed - self.activeEnergyBurned - self.restingEnergyBurned;
+        self.energyConsumed = totalJoulesConsumed ? [totalJoulesConsumed doubleValue] : 0;
+        self.activeEnergyBurned = activeEnergyBurned ? [activeEnergyBurned doubleValue] : 0;
+        self.restingEnergyBurned = basalEnergyBurn ? [basalEnergyBurn doubleValueForUnit:[HKUnit jouleUnit]] : 0;
+        self.netEnergy = self.energyConsumed - self.activeEnergyBurned - self.restingEnergyBurned;
          
-         [self.refreshControl endRefreshing];
-     } error:^(NSError *error) {
-         NSLog(@"ERROR: %@", error);
-         [self.refreshControl endRefreshing];
-     }];
+        [self.refreshControl endRefreshing];
+    }
+    error:^(NSError *error) {
+        NSLog(@"ERROR: %@", error);
+        [self.refreshControl endRefreshing];
+    }];
 }
 
 - (RACSignal *)fetchSumOfSamplesTodayForType:(HKQuantityType *)quantityType unit:(HKUnit *)unit {
     NSPredicate *predicate = [self predicateForSamplesToday];
     
-    @weakify(self)
     return [RACSignal createSignal: ^(id<RACSubscriber> subscriber) {
-        @strongify(self)
         
-        [[self.healthStore rac_executeStatisticsQueryWithQuantityType:quantityType quantitySamplePredicate:predicate options:HKStatisticsOptionCumulativeSum]
-         subscribeNext:^(RACTuple *data) {
+        [[self.healthStore
+        rac_executeStatisticsQueryWithQuantityType:quantityType quantitySamplePredicate:predicate options:HKStatisticsOptionCumulativeSum]
+        subscribeNext:^(RACTuple *data) {
              
-             HKStatistics *result = (HKStatistics *)data.second;
-             HKQuantity *sum = [result sumQuantity];
+            HKStatistics *result = (HKStatistics *)data.second;
+            HKQuantity *sum = [result sumQuantity];
              
-             if (sum) {
-                 double value = [sum doubleValueForUnit:unit];
-                 [subscriber sendNext:[NSNumber numberWithDouble:value]];
-             } else {
-                 [subscriber sendNext:nil];
-             }
+            if (sum) {
+                double value = [sum doubleValueForUnit:unit];
+                [subscriber sendNext:[NSNumber numberWithDouble:value]];
+            } else {
+                [subscriber sendNext:nil];
+            }
              
-             [subscriber sendCompleted];
-         } error:^(NSError *error) {
-             [subscriber sendError:error];
-         }];
+            [subscriber sendCompleted];
+        }
+        error:^(NSError *error) {
+            [subscriber sendError:error];
+        }];
         
         return (RACDisposable *)nil;
     }];
@@ -119,10 +118,7 @@
     HKQuantityType *weightType = [HKObjectType quantityTypeForIdentifier:HKQuantityTypeIdentifierBodyMass];
     HKQuantityType *heightType = [HKObjectType quantityTypeForIdentifier:HKQuantityTypeIdentifierHeight];
     
-    @weakify(self)
     return [RACSignal createSignal: ^(id<RACSubscriber> subscriber) {
-        @strongify(self)
-        
         // create individual signals for each of our desired data points; this will allow
         // us to retrieve their values all in parallel, instead of sequentially like the
         // example Apple app does, which in turn requires longer to complete
@@ -131,24 +127,24 @@
         RACSignal *dateOfBirthSignal = [self.healthStore rac_dateOfBirth];
         RACSignal *biologicalSexSignal = [self.healthStore rac_biologicalSex];
         
-        @weakify(self)
         // zip: allows us to wait until all signals have sent a value
-        [[RACSignal zip:@[weightSignal, heightSignal, dateOfBirthSignal, biologicalSexSignal]
-                 reduce:^id(id weight, id height, id dob, id sex) {
-                     @strongify(self)
-                     // Once we have pulled all of the information without errors, calculate the user's total basal energy burn
-                     return [self calculateBasalBurnTodayFromWeight:weight height:height dateOfBirth:dob biologicalSex:sex];
-                 }]
-         subscribeNext:^(HKQuantity *basalEnergyBurn) {
-             if (basalEnergyBurn) {
-                 [subscriber sendNext:basalEnergyBurn];
-             } else {
-                 [subscriber sendNext:nil];
-             }
-             [subscriber sendCompleted];
-         } error:^(NSError *error) {
-             [subscriber sendError:error];
-         }];
+        [[RACSignal
+        zip:@[weightSignal, heightSignal, dateOfBirthSignal, biologicalSexSignal]
+        reduce:^id(id weight, id height, id dob, id sex) {
+            // Once we have pulled all of the information without errors, calculate the user's total basal energy burn
+            return [self calculateBasalBurnTodayFromWeight:weight height:height dateOfBirth:dob biologicalSex:sex];
+        }]
+        subscribeNext:^(HKQuantity *basalEnergyBurn) {
+            if (basalEnergyBurn) {
+                [subscriber sendNext:basalEnergyBurn];
+            } else {
+                [subscriber sendNext:nil];
+            }
+            [subscriber sendCompleted];
+        }
+        error:^(NSError *error) {
+            [subscriber sendError:error];
+        }];
         
         return (RACDisposable *)nil;
     }];

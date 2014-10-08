@@ -18,27 +18,28 @@
 {
     
     return [[RACSignal createSignal:^(id<RACSubscriber> subscriber) {
-        __block HKSampleQuery *qry = nil;
+        __block HKSampleQuery *qry = [self
+                                      rac_createSampleQueryWithSampleOfType:sampleType
+                                      predicate:predicate
+                                      limit:limit
+                                      sortDescriptors:sortDescriptors
+                                      completion:^(HKSampleQuery *query, NSArray *results, NSError *error) {
+                                          if (!error) {
+                                              // REMEMBER: just because we don't have an error here, doesn't
+                                              // mean we have data; always check the returned object prior
+                                              // to use as HealthKit won't create an error if a user has not
+                                              // granted us access to the data point we want to retrieve
+                                              [subscriber sendNext:RACTuplePack(query, results)];
+                                              [subscriber sendCompleted];
+                                          }
+                                          else {
+                                              [subscriber sendError:error];
+                                          }
+                                          
+                                          qry = nil;
+                                      }];
+        [self executeQuery:qry];
         
-        [self rac_executeSampleQueryWithSampleOfType:sampleType
-                                           predicate:predicate
-                                               limit:limit
-                                     sortDescriptors:sortDescriptors
-                                          completion:^(HKSampleQuery *query, NSArray *results, NSError *error) {
-                                              qry = query;
-                                              
-                                              if (!error) {
-                                                  // REMEMBER: just because we don't have an error here, doesn't
-                                                  // mean we have data; always check the returned object prior
-                                                  // to use as HealthKit won't create an error if a user has not
-                                                  // granted us access to the data point we want to retrieve
-                                                  [subscriber sendNext:RACTuplePack(query, results)];
-                                                  [subscriber sendCompleted];
-                                              }
-                                              else {
-                                                  [subscriber sendError:error];
-                                              }
-                                          }];
         return [RACDisposable disposableWithBlock: ^{
             [self stopQuery:qry];
         }];
@@ -51,26 +52,27 @@
                                                   options:(HKStatisticsOptions)options
 {
     return [[RACSignal createSignal:^(id<RACSubscriber> subscriber) {
-        __block HKStatisticsQuery *qry = nil;
+        __block HKStatisticsQuery *qry = [self
+                                          rac_createStatisticsQueryWithQuantityType:quantityType
+                                          quantitySamplePredicate:quantitySamplePredicate
+                                          options:options
+                                          completion:^(HKStatisticsQuery *query, HKStatistics *result, NSError *error) {
+                                              if (!error) {
+                                                  // REMEMBER: just because we don't have an error here, doesn't
+                                                  // mean we have data; always check the returned object prior
+                                                  // to use as HealthKit won't create an error if a user has not
+                                                  // granted us access to the data point we want to retrieve
+                                                  [subscriber sendNext:RACTuplePack(query, result)];
+                                                  [subscriber sendCompleted];
+                                              }
+                                              else {
+                                                  [subscriber sendError:error];
+                                              }
+                                              
+                                              qry = nil;
+                                          }];
+        [self executeQuery:qry];
         
-        [self rac_executeStatisticsQueryWithQuantityType:quantityType
-                                 quantitySamplePredicate:quantitySamplePredicate
-                                                 options:options
-                                              completion:^(HKStatisticsQuery *query, HKStatistics *result, NSError *error) {
-                                                  qry = query;
-                                                  
-                                                  if (!error) {
-                                                      // REMEMBER: just because we don't have an error here, doesn't
-                                                      // mean we have data; always check the returned object prior
-                                                      // to use as HealthKit won't create an error if a user has not
-                                                      // granted us access to the data point we want to retrieve
-                                                      [subscriber sendNext:RACTuplePack(query, result)];
-                                                      [subscriber sendCompleted];
-                                                  }
-                                                  else {
-                                                      [subscriber sendError:error];
-                                                  }
-                                              }];
         return [RACDisposable disposableWithBlock: ^{
             [self stopQuery:qry];
         }];
@@ -79,39 +81,42 @@
 }
 
 #pragma mark - Private Methods
-- (void)rac_executeSampleQueryWithSampleOfType:(HKSampleType *)sampleType
-                                     predicate:(NSPredicate *)predicate
-                                         limit:(NSUInteger)limit
-                               sortDescriptors:(NSArray *)sortDescriptors
-                                    completion:(void (^)(HKSampleQuery *query, NSArray *results, NSError *error))completion
+// Developer's Note: adept readers will realize I could've (should've?)
+// init'd the 2 query objects within the public methods above, as opposed
+// to having 2 additional private methods down here; the only reason these
+// methods are separated out here is for unit testing purposes as I was
+// having trouble stubbing the query init methods alone in order to
+// control the completion blocks while also returning a viable query
+// object; PRs with this testing issue solved are welcome! :)
+- (HKSampleQuery *)rac_createSampleQueryWithSampleOfType:(HKSampleType *)sampleType
+                                                predicate:(NSPredicate *)predicate
+                                                    limit:(NSUInteger)limit
+                                          sortDescriptors:(NSArray *)sortDescriptors
+                                               completion:(void (^)(HKSampleQuery *query, NSArray *results, NSError *error))completion
 {
     
-    HKSampleQuery *query = [[HKSampleQuery alloc] initWithSampleType:sampleType
-                                                           predicate:predicate
-                                                               limit:limit
-                                                     sortDescriptors:sortDescriptors
-                                                      resultsHandler:^(HKSampleQuery *query, NSArray *results, NSError *error) {
-                                                          
-                                                          completion(query, results, error);
-                                                      }];
+    return [[HKSampleQuery alloc] initWithSampleType:sampleType
+                                           predicate:predicate
+                                               limit:limit
+                                     sortDescriptors:sortDescriptors
+                                      resultsHandler:^(HKSampleQuery *query, NSArray *results, NSError *error) {
+                                          completion(query, results, error);
+                                      }];
     
-    [self executeQuery:query];
 }
 
-- (void)rac_executeStatisticsQueryWithQuantityType:(HKQuantityType *)quantityType
-                           quantitySamplePredicate:(NSPredicate *)quantitySamplePredicate
-                                           options:(HKStatisticsOptions)options
-                                        completion:(void (^)(HKStatisticsQuery *query, HKStatistics *result, NSError *error))completion
+- (HKStatisticsQuery *)rac_createStatisticsQueryWithQuantityType:(HKQuantityType *)quantityType
+                                          quantitySamplePredicate:(NSPredicate *)quantitySamplePredicate
+                                                          options:(HKStatisticsOptions)options
+                                                       completion:(void (^)(HKStatisticsQuery *query, HKStatistics *result, NSError *error))completion
 {
-    HKStatisticsQuery *query = [[HKStatisticsQuery alloc] initWithQuantityType:quantityType
-                                                       quantitySamplePredicate:quantitySamplePredicate
-                                                                       options:options
-                                                             completionHandler:^(HKStatisticsQuery *query, HKStatistics *result, NSError *error) {
-                                                                 
-                                                                 completion(query, result, error);
-                                                             }];
+    return [[HKStatisticsQuery alloc] initWithQuantityType:quantityType
+                                   quantitySamplePredicate:quantitySamplePredicate
+                                                   options:options
+                                         completionHandler:^(HKStatisticsQuery *query, HKStatistics *result, NSError *error) {
+                                             completion(query, result, error);
+                                         }];
     
-    [self executeQuery:query];
 }
 
 @end
