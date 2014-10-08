@@ -186,7 +186,7 @@
         }];
         return (RACDisposable *)nil;
     }]
-    setNameWithFormat:@"rac_enableBackgroundDeliveryForType:%@ frequency:%ld", type, frequency];
+    setNameWithFormat:@"rac_enableBackgroundDeliveryForType:%@ frequency:%li", type, frequency];
 }
 
 - (RACSignal *)rac_disableBackgroundDeliveryForType:(HKObjectType *)type

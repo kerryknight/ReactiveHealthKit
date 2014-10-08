@@ -46,20 +46,20 @@ typedef NS_ENUM(NSInteger, AAPLProfileViewControllerTableViewIndex) {
         NSSet *writeDataTypes = [self dataTypesToWrite];
         NSSet *readDataTypes = [self dataTypesToRead];
         
-        @weakify(self)
-        [[[self.healthStore rac_requestAuthorizationToShareTypes:writeDataTypes readTypes:readDataTypes]
-          deliverOn:[RACScheduler mainThreadScheduler]] // ensure we deliver on main thread as HK always uses a background thread
-         subscribeNext:^(id success) {
-             if ([success boolValue]) {
-                 @strongify(self)
-                 // Update the user interface based on the current user's health information.
-                 [self updateUsersAgeLabel];
-                 [self updateUsersHeightLabel];
-                 [self updateUsersWeightLabel];
-             }
-         } error:^(NSError *error) {
-             NSLog(@"You didn't allow HealthKit to access these read/write data types. In your app, try to handle this error gracefully when a user decides not to provide access. The error was: %@. If you're using a simulator, try it on a device.", error);
-         }];
+        [[[self.healthStore
+        rac_requestAuthorizationToShareTypes:writeDataTypes readTypes:readDataTypes]
+        deliverOn:[RACScheduler mainThreadScheduler]] // ensure we deliver on main thread as HK always uses a background thread
+        subscribeNext:^(id success) {
+            if ([success boolValue]) {
+                // Update the user interface based on the current user's health information.
+                [self updateUsersAgeLabel];
+                [self updateUsersHeightLabel];
+                [self updateUsersWeightLabel];
+            }
+        }
+        error:^(NSError *error) {
+            NSLog(@"You didn't allow HealthKit to access these read/write data types. In your app, try to handle this error gracefully when a user decides not to provide access. The error was: %@. If you're using a simulator, try it on a device.", error);
+        }];
     }
 }
 
@@ -93,28 +93,27 @@ typedef NS_ENUM(NSInteger, AAPLProfileViewControllerTableViewIndex) {
     // Set the user's age unit (years).
     self.ageUnitLabel.text = NSLocalizedString(@"Age (yrs)", nil);
     
-    @weakify(self)
-    [[[self.healthStore rac_dateOfBirth]
+    [[[self.healthStore
+    rac_dateOfBirth]
       // ensure we deliver on main thread as HealthKit queries always use a background thread
-      deliverOn:[RACScheduler mainThreadScheduler]]
-     subscribeNext:^(NSDate *dob) {
-         @strongify(self)
-         if (dob) {
-             // Compute the age of the user.
-             NSDate *now = [NSDate date];
-             NSDateComponents *ageComponents = [[NSCalendar currentCalendar] components:NSCalendarUnitYear fromDate:dob toDate:now options:NSCalendarWrapComponents];
-             NSUInteger usersAge = [ageComponents year];
-             self.ageValueLabel.text = [NSNumberFormatter localizedStringFromNumber:@(usersAge) numberStyle:NSNumberFormatterNoStyle];
-         } else {
-             self.ageValueLabel.text = NSLocalizedString(@"Not available", nil);
-             NSLog(@"No user age information has been stored. In your app, try to handle this gracefully.");
-         }
+    deliverOn:[RACScheduler mainThreadScheduler]]
+    subscribeNext:^(NSDate *dob) {
+        if (dob) {
+            // Compute the age of the user.
+            NSDate *now = [NSDate date];
+            NSDateComponents *ageComponents = [[NSCalendar currentCalendar] components:NSCalendarUnitYear fromDate:dob toDate:now options:NSCalendarWrapComponents];
+            NSUInteger usersAge = [ageComponents year];
+            self.ageValueLabel.text = [NSNumberFormatter localizedStringFromNumber:@(usersAge) numberStyle:NSNumberFormatterNoStyle];
+        } else {
+            self.ageValueLabel.text = NSLocalizedString(@"Not available", nil);
+            NSLog(@"No user age information has been stored. In your app, try to handle this gracefully.");
+        }
          
-     } error:^(NSError *error) {
-         @strongify(self)
-         self.ageValueLabel.text = NSLocalizedString(@"Not available", nil);
-         NSLog(@"An error occured fetching the user's age information. In your app, try to handle this gracefully.");
-     }];
+    }
+    error:^(NSError *error) {
+        self.ageValueLabel.text = NSLocalizedString(@"Not available", nil);
+        NSLog(@"An error occured fetching the user's age information. In your app, try to handle this gracefully.");
+    }];
 }
 
 - (void)updateUsersHeightLabel {
@@ -131,27 +130,25 @@ typedef NS_ENUM(NSInteger, AAPLProfileViewControllerTableViewIndex) {
     HKQuantityType *heightType = [HKQuantityType quantityTypeForIdentifier:HKQuantityTypeIdentifierHeight];
     
     // Query to get the user's latest height, if it exists.
-    @weakify(self)
-    [[[self.healthStore aapl_mostRecentQuantitySampleOfType:heightType predicate:nil]
-      // ensure we deliver on main thread as HealthKit queries always use a background thread
-      deliverOn:[RACScheduler mainThreadScheduler]]
-     subscribeNext:^(HKQuantity *mostRecentQuantity) {
-         @strongify(self)
-         if (mostRecentQuantity) {
-             // Determine the height in the required unit.
-             HKUnit *heightUnit = [HKUnit inchUnit];
-             double usersHeight = [mostRecentQuantity doubleValueForUnit:heightUnit];
-             self.heightValueLabel.text = [NSNumberFormatter localizedStringFromNumber:@(usersHeight) numberStyle:NSNumberFormatterNoStyle];
-         } else {
-             self.heightValueLabel.text = NSLocalizedString(@"Not available", nil);
-             NSLog(@"No user height information has been stored. In your app, try to handle this gracefully.");
-         }
-         
-     } error:^(NSError *error) {
-         @strongify(self)
-         self.heightValueLabel.text = NSLocalizedString(@"Not available", nil);
-         NSLog(@"An error occured fetching the user's height information. In your app, try to handle this gracefully.");
-     }];
+    [[[self.healthStore
+    aapl_mostRecentQuantitySampleOfType:heightType predicate:nil]
+    // ensure we deliver on main thread as HealthKit queries always use a background thread
+    deliverOn:[RACScheduler mainThreadScheduler]]
+    subscribeNext:^(HKQuantity *mostRecentQuantity) {
+        if (mostRecentQuantity) {
+            // Determine the height in the required unit.
+            HKUnit *heightUnit = [HKUnit inchUnit];
+            double usersHeight = [mostRecentQuantity doubleValueForUnit:heightUnit];
+            self.heightValueLabel.text = [NSNumberFormatter localizedStringFromNumber:@(usersHeight) numberStyle:NSNumberFormatterNoStyle];
+        } else {
+            self.heightValueLabel.text = NSLocalizedString(@"Not available", nil);
+            NSLog(@"No user height information has been stored. In your app, try to handle this gracefully.");
+        }
+    }
+    error:^(NSError *error) {
+        self.heightValueLabel.text = NSLocalizedString(@"Not available", nil);
+        NSLog(@"An error occured fetching the user's height information. In your app, try to handle this gracefully.");
+    }];
 }
 
 - (void)updateUsersWeightLabel {
@@ -168,26 +165,25 @@ typedef NS_ENUM(NSInteger, AAPLProfileViewControllerTableViewIndex) {
     // Query to get the user's latest weight, if it exists.
     HKQuantityType *weightType = [HKQuantityType quantityTypeForIdentifier:HKQuantityTypeIdentifierBodyMass];
     
-    @weakify(self)
-    [[[self.healthStore aapl_mostRecentQuantitySampleOfType:weightType predicate:nil]
-      // ensure we deliver on main thread as HealthKit queries always use a background thread
-      deliverOn:[RACScheduler mainThreadScheduler]]
-     subscribeNext:^(HKQuantity *mostRecentQuantity) {
-         @strongify(self)
-         if (mostRecentQuantity) {
-             // Determine the weight in the required unit.
-             HKUnit *weightUnit = [HKUnit poundUnit];
-             double usersWeight = [mostRecentQuantity doubleValueForUnit:weightUnit];
-             self.weightValueLabel.text = [NSNumberFormatter localizedStringFromNumber:@(usersWeight) numberStyle:NSNumberFormatterNoStyle];
-         } else {
-             self.weightValueLabel.text = NSLocalizedString(@"Not available", nil);
-             NSLog(@"No user weight information has been stored. In your app, try to handle this gracefully.");
-         }
-     } error:^(NSError *error) {
-         @strongify(self)
-         self.weightValueLabel.text = NSLocalizedString(@"Not available", nil);
-         NSLog(@"An error occured fetching the user's weight information. In your app, try to handle this gracefully.");
-     }];
+    [[[self.healthStore
+    aapl_mostRecentQuantitySampleOfType:weightType predicate:nil]
+    // ensure we deliver on main thread as HealthKit queries always use a background thread
+    deliverOn:[RACScheduler mainThreadScheduler]]
+    subscribeNext:^(HKQuantity *mostRecentQuantity) {
+        if (mostRecentQuantity) {
+            // Determine the weight in the required unit.
+            HKUnit *weightUnit = [HKUnit poundUnit];
+            double usersWeight = [mostRecentQuantity doubleValueForUnit:weightUnit];
+            self.weightValueLabel.text = [NSNumberFormatter localizedStringFromNumber:@(usersWeight) numberStyle:NSNumberFormatterNoStyle];
+        } else {
+            self.weightValueLabel.text = NSLocalizedString(@"Not available", nil);
+            NSLog(@"No user weight information has been stored. In your app, try to handle this gracefully.");
+        }
+    }
+    error:^(NSError *error) {
+        self.weightValueLabel.text = NSLocalizedString(@"Not available", nil);
+        NSLog(@"An error occured fetching the user's weight information. In your app, try to handle this gracefully.");
+    }];
 }
 
 #pragma mark - Writing HealthKit Data
@@ -202,11 +198,10 @@ typedef NS_ENUM(NSInteger, AAPLProfileViewControllerTableViewIndex) {
     
     HKQuantitySample *heightSample = [HKQuantitySample quantitySampleWithType:heightType quantity:heightQuantity startDate:now endDate:now];
     
-    @weakify(self)
-    [[self.healthStore rac_saveObject:heightSample]
-     subscribeNext:^(id success) {
+    [[self.healthStore
+    rac_saveObject:heightSample]
+    subscribeNext:^(id success) {
          if ([success boolValue]) {
-             @strongify(self)
              [self updateUsersHeightLabel];
          }
      } error:^(NSError *error) {
@@ -225,17 +220,17 @@ typedef NS_ENUM(NSInteger, AAPLProfileViewControllerTableViewIndex) {
     
     HKQuantitySample *weightSample = [HKQuantitySample quantitySampleWithType:weightType quantity:weightQuantity startDate:now endDate:now];
     
-    @weakify(self)
-    [[self.healthStore rac_saveObject:weightSample]
-     subscribeNext:^(id success) {
-         if ([success boolValue]) {
-             @strongify(self)
-             [self updateUsersWeightLabel];
-         }
-     } error:^(NSError *error) {
-         NSLog(@"An error occured saving the weight sample %@. In your app, try to handle this gracefully. The error was: %@.", weightSample, error);
-         abort();
-     }];
+    [[self.healthStore
+    rac_saveObject:weightSample]
+    subscribeNext:^(id success) {
+        if ([success boolValue]) {
+            [self updateUsersWeightLabel];
+        }
+    }
+    error:^(NSError *error) {
+        NSLog(@"An error occured saving the weight sample %@. In your app, try to handle this gracefully. The error was: %@.", weightSample, error);
+        abort();
+    }];
 }
 
 #pragma mark - UITableViewDelegate

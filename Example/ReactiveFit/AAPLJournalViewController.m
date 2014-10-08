@@ -55,35 +55,34 @@ NSString *const AAPLJournalViewControllerTableViewCellReuseIdentifier = @"cell";
     
     NSPredicate *predicate = [HKQuery predicateForSamplesWithStartDate:startDate endDate:endDate options:HKQueryOptionNone];
     
-    @weakify(self)
-    [[[self.healthStore rac_executeSampleQueryWithSampleOfType:foodType predicate:predicate limit:HKObjectQueryNoLimit sortDescriptors:nil]
-      // ensure we deliver on main thread as HealthKit queries always use a background thread
-      deliverOn:[RACScheduler mainThreadScheduler]]
-     subscribeNext:^(RACTuple *data) {
-         // tuple unpacked == (HKStatisticsQuery *query, NSArray *results)
-         NSArray *results = data.second;
-         
-         @strongify(self)
-         if (results) {
-             [self.foodItems removeAllObjects];
+    [[[self.healthStore
+    rac_executeSampleQueryWithSampleOfType:foodType predicate:predicate limit:HKObjectQueryNoLimit sortDescriptors:nil]
+    // ensure we deliver on main thread as HealthKit queries always use a background thread
+    deliverOn:[RACScheduler mainThreadScheduler]]
+    subscribeNext:^(RACTuple *data) {
+        // tuple unpacked == (HKStatisticsQuery *query, NSArray *results)
+        NSArray *results = data.second;
+        
+        if (results) {
+            [self.foodItems removeAllObjects];
              
-             for (HKCorrelation *foodCorrelation in results) {
-                 // Create an AAPLFoodItem instance that contains the information we care about that's
-                 // stored in the food correlation.
-                 AAPLFoodItem *foodItem = [self foodItemFromFoodCorrelation:foodCorrelation];
+            for (HKCorrelation *foodCorrelation in results) {
+                // Create an AAPLFoodItem instance that contains the information we care about that's
+                // stored in the food correlation.
+                AAPLFoodItem *foodItem = [self foodItemFromFoodCorrelation:foodCorrelation];
                  
-                 [self.foodItems addObject:foodItem];
-             }
+                [self.foodItems addObject:foodItem];
+            }
              
-             [self.tableView reloadData];
-         } else {
-             NSLog(@"User has not tracked any food. In your app, try to handle this gracefully.");
-         }
-         
-     } error:^(NSError *error) {
-         NSLog(@"An error occured fetching the user's tracked food. In your app, try to handle this gracefully. The error was: %@.", error);
-         abort();
-     }];
+            [self.tableView reloadData];
+        } else {
+            NSLog(@"User has not tracked any food. In your app, try to handle this gracefully.");
+        }
+    }
+    error:^(NSError *error) {
+        NSLog(@"An error occured fetching the user's tracked food. In your app, try to handle this gracefully. The error was: %@.", error);
+        abort();
+    }];
 }
 
 - (AAPLFoodItem *)foodItemFromFoodCorrelation:(HKCorrelation *)foodCorrelation {
@@ -110,22 +109,22 @@ NSString *const AAPLJournalViewControllerTableViewCellReuseIdentifier = @"cell";
     // Create a new food correlation for the given food item.
     HKCorrelation *foodCorrelationForFoodItem = [self foodCorrelationForFoodItem:foodItem];
     
-    @weakify(self)
-    [[[self.healthStore rac_saveObject:foodCorrelationForFoodItem]
-      // ensure we deliver on main thread as HealthKit queries always use a background thread
-      deliverOn:[RACScheduler mainThreadScheduler]]
-     subscribeNext:^(id success) {
-         @strongify(self)
-         if ([success boolValue]) {
-             [self.foodItems insertObject:foodItem atIndex:0];
-             NSIndexPath *indexPathForInsertedFoodItem = [NSIndexPath indexPathForRow:0 inSection:0];
-             [self.tableView insertRowsAtIndexPaths:@[indexPathForInsertedFoodItem] withRowAnimation:UITableViewRowAnimationAutomatic];
-         }
-     } error:^(NSError *error) {
-         NSLog(@"error: %@", error);
-         NSLog(@"An error occured saving the food %@. In your app, try to handle this gracefully. The error was: %@.", foodItem.name, error);
-         abort();
-     }];
+    [[[self.healthStore
+    rac_saveObject:foodCorrelationForFoodItem]
+    // ensure we deliver on main thread as HealthKit queries always use a background thread
+    deliverOn:[RACScheduler mainThreadScheduler]]
+    subscribeNext:^(id success) {
+        if ([success boolValue]) {
+            [self.foodItems insertObject:foodItem atIndex:0];
+            NSIndexPath *indexPathForInsertedFoodItem = [NSIndexPath indexPathForRow:0 inSection:0];
+            [self.tableView insertRowsAtIndexPaths:@[indexPathForInsertedFoodItem] withRowAnimation:UITableViewRowAnimationAutomatic];
+        }
+    }
+    error:^(NSError *error) {
+        NSLog(@"error: %@", error);
+        NSLog(@"An error occured saving the food %@. In your app, try to handle this gracefully. The error was: %@.", foodItem.name, error);
+        abort();
+    }];
 }
 
 - (HKCorrelation *)foodCorrelationForFoodItem:(AAPLFoodItem *)foodItem {

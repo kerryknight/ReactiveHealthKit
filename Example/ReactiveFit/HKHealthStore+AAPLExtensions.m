@@ -16,31 +16,29 @@
 - (RACSignal *)aapl_mostRecentQuantitySampleOfType:(HKQuantityType *)quantityType predicate:(NSPredicate *)predicate {
     NSSortDescriptor *timeSortDescriptor = [[NSSortDescriptor alloc] initWithKey:HKSampleSortIdentifierEndDate ascending:NO];
     
-    @weakify(self)
     return [RACSignal createSignal: ^(id<RACSubscriber> subscriber) {
-        @strongify(self)
         
         [[self rac_executeSampleQueryWithSampleOfType:quantityType predicate:predicate limit:1 sortDescriptors:@[timeSortDescriptor]]
-         subscribeNext:^(RACTuple *data) {
+        subscribeNext:^(RACTuple *data) {
+            NSArray *results = (NSArray *)data.second;
              
-             NSArray *results = (NSArray *)data.second;
+            // always check the returned object as HealthKit won't create an
+            // error if a user has not granted us access to that data point
+            if (results) {
+                // If quantity isn't in the database, return nil in the completion block.
+                HKQuantitySample *quantitySample = results.firstObject;
+                HKQuantity *quantity = quantitySample.quantity;
+                [subscriber sendNext:quantity];
+            } else {
+                [subscriber sendNext:nil];
+            }
              
-             // always check the returned object as HealthKit won't create an
-             // error if a user has not granted us access to that data point
-             if (results) {
-                 // If quantity isn't in the database, return nil in the completion block.
-                 HKQuantitySample *quantitySample = results.firstObject;
-                 HKQuantity *quantity = quantitySample.quantity;
-                 [subscriber sendNext:quantity];
-             } else {
-                 [subscriber sendNext:nil];
-             }
+            [subscriber sendCompleted];
              
-             [subscriber sendCompleted];
-             
-         } error:^(NSError *error) {
-             [subscriber sendError:error];
-         }];
+        }
+        error:^(NSError *error) {
+            [subscriber sendError:error];
+        }];
         
         return (RACDisposable *)nil;
     }];
