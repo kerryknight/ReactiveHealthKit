@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "ReactiveHealthKit"
-  s.version          = "0.2.3"
+  s.version          = "0.2.4"
   s.summary          = "ReactiveCocoa extensions for HealthKit"
   s.homepage         = "https://github.com/kerryknight/ReactiveHealthKit"
   s.license          = 'MIT'
