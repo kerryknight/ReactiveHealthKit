@@ -24,6 +24,8 @@
                                       limit:limit
                                       sortDescriptors:sortDescriptors
                                       completion:^(HKSampleQuery *query, NSArray *results, NSError *error) {
+                                          qry = nil;
+                                          
                                           if (!error) {
                                               // REMEMBER: just because we don't have an error here, doesn't
                                               // mean we have data; always check the returned object prior
@@ -35,8 +37,6 @@
                                           else {
                                               [subscriber sendError:error];
                                           }
-                                          
-                                          qry = nil;
                                       }];
         [self executeQuery:qry];
         
@@ -57,6 +57,8 @@
                                           quantitySamplePredicate:quantitySamplePredicate
                                           options:options
                                           completion:^(HKStatisticsQuery *query, HKStatistics *result, NSError *error) {
+                                              qry = nil;
+                                              
                                               if (!error) {
                                                   // REMEMBER: just because we don't have an error here, doesn't
                                                   // mean we have data; always check the returned object prior
@@ -68,8 +70,6 @@
                                               else {
                                                   [subscriber sendError:error];
                                               }
-                                              
-                                              qry = nil;
                                           }];
         [self executeQuery:qry];
         
