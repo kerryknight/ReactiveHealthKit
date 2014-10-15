@@ -1,6 +1,6 @@
 # reference: http://www.objc.io/issue-6/travis-ci.html
 
 language: objective-c
-before_install: cd ReactiveHealthKitTests && pod install && cd -
+before_install: cd ReactiveHealthKitTests && pod install -
 script:
 - xctool test -workspace ReactiveHealthKitTests/ReactiveHealthKit.xcworkspace -scheme ReactiveHealthKit -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO
