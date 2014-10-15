@@ -80,7 +80,7 @@ describe(@"HKHealthStore+RAC", ^{
         // that has been passed in by the actual test
         // the arguments for the actual method start with 2 (see NSInvocation doc)
         [invocation getArgument:&block atIndex:completionBlockParameterPosition];
-        block(nil, err);
+        block(NO, err);
     };
     
     beforeEach(^{

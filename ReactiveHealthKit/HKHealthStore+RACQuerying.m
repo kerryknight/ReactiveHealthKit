@@ -77,7 +77,7 @@
             [self stopQuery:qry];
         }];
     }]
-    setNameWithFormat:@"rac_executeStatisticsQueryWithQuantityType:%@ quantitySamplePredicate:%@ options:%lu", quantityType, quantitySamplePredicate, options];
+    setNameWithFormat:@"rac_executeStatisticsQueryWithQuantityType:%@ quantitySamplePredicate:%@ options:%lu", quantityType, quantitySamplePredicate, (unsigned long)options];
 }
 
 #pragma mark - Private Methods
