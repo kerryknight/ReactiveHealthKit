@@ -40,7 +40,7 @@ iOS 8.0+ running on a HealthKit-compatible iPhone; HealthKit is not compatible w
 
 ## Author
 
-Kerry Knight, kerry.a.knight@gmail.com
+[Kerry Knight](https://github.com/kerryknight)
 
 ## License
 
